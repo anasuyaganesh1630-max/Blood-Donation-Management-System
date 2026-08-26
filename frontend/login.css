@@ -1,0 +1,248 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(
+    rgba(0,0,0,0.4),
+    rgba(0,0,0,0.4)),
+    url("https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1500&q=80");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.login-card{
+
+    width:420px;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    backdrop-filter:blur(15px);
+
+    background:
+    rgba(255,255,255,0.15);
+
+    border:
+    1px solid rgba(255,255,255,0.2);
+
+    text-align:center;
+
+    color:white;
+
+    box-shadow:
+    0 8px 32px rgba(0,0,0,0.3);
+}
+
+.icon{
+    font-size:70px;
+    margin-bottom:10px;
+}
+
+.login-card h1{
+    margin-bottom:10px;
+}
+
+.login-card p{
+    margin-bottom:25px;
+    color:#eee;
+}
+
+.login-card input{
+
+    width:100%;
+
+    padding:15px;
+
+    margin:10px 0;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    font-size:16px;
+}
+
+.login-card button{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#e63946;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:
+    0 0 15px #ff4d6d;
+
+}
+
+.login-card button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 0 25px #ff4d6d,
+    0 0 50px #ff4d6d;
+
+}
+
+.extra{
+
+    margin-top:20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:14px;
+}
+
+.extra span{
+
+    display:flex;
+    gap:5px;
+    align-items:center;
+}
+.loader{
+
+    display:none;
+
+    margin:20px auto;
+
+    width:50px;
+    height:50px;
+
+    border:5px solid rgba(255,255,255,0.3);
+
+    border-top:5px solid white;
+
+    border-radius:50%;
+
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+
+    0%{
+        transform:rotate(0deg);
+    }
+
+    100%{
+        transform:rotate(360deg);
+    }
+
+}
+.icon{
+
+    font-size:70px;
+
+    animation:heartbeat 1.2s infinite;
+
+}
+
+@keyframes heartbeat{
+
+    0%{
+        transform:scale(1);
+    }
+
+    25%{
+        transform:scale(1.2);
+    }
+
+    50%{
+        transform:scale(1);
+    }
+
+    75%{
+        transform:scale(1.2);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+.drop{
+
+    position:absolute;
+
+    font-size:40px;
+
+    animation:float 6s infinite ease-in-out;
+
+}
+
+.drop1{
+    top:10%;
+    left:10%;
+}
+
+.drop2{
+    top:70%;
+    right:10%;
+}
+
+.drop3{
+    top:20%;
+    right:20%;
+}
+
+@keyframes float{
+
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-30px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+
+}
+#successMsg{
+
+    display:none;
+
+    margin-top:15px;
+
+    background:#2ecc71;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    color:white;
+
+    font-weight:bold;
+
+}

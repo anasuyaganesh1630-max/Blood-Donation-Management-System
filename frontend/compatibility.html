@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blood Compatibility Checker</title>
+    <link rel="stylesheet" href="hospital.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🩸 Blood Compatibility Checker</h1>
+
+    <select id="bloodGroup">
+        <option value="">Select Blood Group</option>
+        <option>A+</option>
+        <option>A-</option>
+        <option>B+</option>
+        <option>B-</option>
+        <option>AB+</option>
+        <option>AB-</option>
+        <option>O+</option>
+        <option>O-</option>
+    </select>
+
+    <br><br>
+
+    <button onclick="checkCompatibility()">
+        Check Compatibility
+    </button>
+
+    <div id="result"></div>
+
+</div>
+
+<script>
+
+function checkCompatibility(){
+
+    const group =
+    document.getElementById("bloodGroup").value;
+
+    const compatibility = {
+
+        "A+" : {
+            donors:["A+","A-","O+","O-"],
+            recipients:["A+","AB+"]
+        },
+
+        "A-" : {
+            donors:["A-","O-"],
+            recipients:["A+","A-","AB+","AB-"]
+        },
+
+        "B+" : {
+            donors:["B+","B-","O+","O-"],
+            recipients:["B+","AB+"]
+        },
+
+        "B-" : {
+            donors:["B-","O-"],
+            recipients:["B+","B-","AB+","AB-"]
+        },
+
+        "AB+" : {
+            donors:["All Blood Groups"],
+            recipients:["AB+"]
+        },
+
+        "AB-" : {
+            donors:["AB-","A-","B-","O-"],
+            recipients:["AB+","AB-"]
+        },
+
+        "O+" : {
+            donors:["O+","O-"],
+            recipients:["O+","A+","B+","AB+"]
+        },
+
+        "O-" : {
+            donors:["O-"],
+            recipients:["All Blood Groups"]
+        }
+
+    };
+
+    const data = compatibility[group];
+
+    document.getElementById("result").innerHTML = `
+
+    <div class="history-card">
+
+        <h2>Blood Group: ${group}</h2>
+
+        <p>
+        <strong>Can Receive From:</strong><br>
+        ${data.donors.join(", ")}
+        </p>
+
+        <br>
+
+        <p>
+        <strong>Can Donate To:</strong><br>
+        ${data.recipients.join(", ")}
+        </p>
+
+    </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>

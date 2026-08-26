@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Admin Login</title>
+
+    <link rel="stylesheet" href="login.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="drop drop1">🩸</div>
+<div class="drop drop2">🩸</div>
+<div class="drop drop3">🩸</div>
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="icon">
+            🩸
+        </div>
+
+        <h1>Hospital Admin</h1>
+
+        <p id="typing"></p>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Username">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password">
+
+        <button onclick="login()">
+            Login
+        </button>
+<div id="loader" class="loader"></div>
+<div id="successMsg">
+    ✅ Login Successful
+</div>
+        <div class="extra">
+
+            <span>
+                <i class="fa-solid fa-heart"></i>
+                Save Lives
+            </span>
+
+            <span>
+                <i class="fa-solid fa-shield-heart"></i>
+                Secure Access
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function login(){
+
+    const username =
+    document.getElementById("username").value;
+
+    const password =
+    document.getElementById("password").value;
+
+    if(
+        username === "admin" &&
+        password === "admin123"
+    ){
+
+        document.getElementById("loader")
+        .style.display = "block";
+
+        document.getElementById("successMsg")
+        .style.display = "block";
+
+        setTimeout(() => {
+
+            window.location.href =
+            "hospital.html";
+
+        }, 2500);
+
+    }
+    else{
+
+        alert("Invalid Login");
+
+    }
+
+}
+const text =
+"Blood Donation Management System";
+
+let i = 0;
+
+function typeText(){
+
+    if(i < text.length){
+
+        document.getElementById("typing")
+        .innerHTML += text.charAt(i);
+
+        i++;
+
+        setTimeout(typeText,80);
+
+    }
+
+}
+
+typeText();
+</script>
+
+</body>
+</html>
