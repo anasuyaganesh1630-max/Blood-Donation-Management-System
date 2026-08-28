@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Donor Details</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        header {
+            background: linear-gradient(
+                135deg,
+                #b71c1c,
+                #e53935
+            );
+
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            background: #333;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #111;
+        }
+
+        .refresh-btn {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .refresh-btn:hover {
+            background: #b71c1c;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #b71c1c;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #b71c1c;
+            color: white;
+            padding: 14px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .view-btn {
+            background: #1976d2;
+            color: white;
+            padding: 8px 14px;
+        }
+
+        .view-btn:hover {
+            background: #125ca0;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+
+        .approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* MODAL */
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            margin: 7% auto;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .close:hover {
+            color: #b71c1c;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 13px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .detail-value {
+            text-align: right;
+            color: #222;
+        }
+
+        @media (max-width: 600px) {
+
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>👤 Donor Details</h1>
+
+    <p>
+        View registered donor information
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="top-bar">
+
+        <button
+            class="back-btn"
+            onclick="goBack()">
+
+            ← Back to Admin
+
+        </button>
+
+
+        <button
+            class="refresh-btn"
+            onclick="loadDonors()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>
+            🩸 Registered Donors
+        </h2>
+
+        <div
+            id="donorContainer"
+            class="table-container">
+
+            <div class="empty">
+                Loading donors...
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- DONOR DETAIL MODAL -->
+<!-- ================================================= -->
+
+<div
+    id="donorModal"
+    class="modal">
+
+    <div class="modal-content">
+
+        <span
+            class="close"
+            onclick="closeModal()">
+
+            &times;
+
+        </span>
+
+
+        <h2>
+            👤 Full Donor Details
+        </h2>
+
+
+        <div id="donorDetails">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// =====================================================
+// BACK TO ADMIN
+// =====================================================
+
+function goBack() {
+
+    window.location.href = "admin.html";
+
+}
+
+
+// =====================================================
+// LOAD DONORS
+// =====================================================
+
+async function loadDonors() {
+
+    const container = document.getElementById("donorContainer");
+
+    container.innerHTML = `
+        <div class="empty">
+            Loading donors...
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/donors/all"
+        );
+
+        const donors = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                donors.message || "Failed to load donors"
+            );
+        }
+
+        if (!Array.isArray(donors) || donors.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty">
+
+                    <h3>🩸 No Approved Donors Found</h3>
+
+                    <p>
+                        There are currently no approved donors.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        donors.forEach(donor => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${donor.id}
+                    </td>
+
+                    <td>
+                        🩸 ${escapeHtml(donor.name)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(donor.email)}
+                    </td>
+
+                    <td>
+
+                        <span class="status approved">
+
+                            Approved
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewDonor(${donor.id})">
+
+                            👁 View Details
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+        container.innerHTML = html;
+
+
+    } catch (error) {
+
+        console.error("Donor loading error:", error);
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h3>
+                    ❌ Unable to Load Donors
+                </h3>
+
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// VIEW ONE DONOR
+// =====================================================
+
+async function viewDonor(id) {
+
+    const modal =
+        document.getElementById("donorModal");
+
+
+    const details =
+        document.getElementById("donorDetails");
+
+
+    modal.style.display = "block";
+
+
+    details.innerHTML = `
+        <p>
+            Loading donor details...
+        </p>
+    `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `http://localhost:5000/api/donors/${id}`
+            );
+
+
+        const donor =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                donor.message || "Donor not found"
+            );
+
+        }
+
+
+        details.innerHTML = `
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Donor ID
+                </span>
+
+                <span class="detail-value">
+                    ${donor.id}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Name
+                </span>
+
+                <span class="detail-value">
+                    ${escapeHtml(donor.name)}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Email
+                </span>
+
+                <span class="detail-value">
+                    ${escapeHtml(donor.email)}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Role
+                </span>
+
+                <span class="detail-value">
+                    ${escapeHtml(donor.role)}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Status
+                </span>
+
+                <span class="detail-value">
+                    ${escapeHtml(donor.status || "Unknown")}
+                </span>
+
+            </div>
+
+        `;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        details.innerHTML = `
+            <p>
+                ❌ Unable to load donor details.
+            </p>
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// CLOSE MODAL
+// =====================================================
+
+function closeModal() {
+
+    document.getElementById(
+        "donorModal"
+    ).style.display = "none";
+
+}
+
+
+window.onclick = function(event) {
+
+    const modal =
+        document.getElementById("donorModal");
+
+    if (event.target === modal) {
+
+        closeModal();
+
+    }
+
+};
+
+
+// =====================================================
+// SECURITY: DISPLAY TEXT SAFELY
+// =====================================================
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+loadDonors();
+
+
+</script>
+
+
+</body>
+
+</html>

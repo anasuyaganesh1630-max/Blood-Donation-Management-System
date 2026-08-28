@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Blood Donation Reports</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(
+                135deg,
+                #b71c1c,
+                #e53935
+            );
+
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+        }
+
+        .back-btn {
+            background: #333;
+        }
+
+        .pdf-btn {
+            background: #c62828;
+        }
+
+        .report {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .report h2 {
+            color: #b71c1c;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: #c62828;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .summary-card h3 {
+            margin: 0;
+            color: #b71c1c;
+        }
+
+        .summary-card p {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 0;
+        }
+
+        @media print {
+
+            body {
+                background: white;
+            }
+
+            header {
+                background: white;
+                color: black;
+                border-bottom: 2px solid #333;
+            }
+
+            .top-bar,
+            button {
+                display: none;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0;
+            }
+
+            .report {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            th {
+                background: #ddd !important;
+                color: black !important;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>🩸 Blood Donation Management Report</h1>
+
+    <p>Donors and Blood Requestors Report</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="top-bar">
+
+        <button
+            class="back-btn"
+            onclick="goBack()">
+
+            ← Back to Admin
+
+        </button>
+
+
+        <button
+            class="pdf-btn"
+            onclick="downloadPDF()">
+
+            📄 Download Report as PDF
+
+        </button>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+
+            <h3>Total Donors</h3>
+
+            <p id="donorCount">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Approved Donors</h3>
+
+            <p id="approvedDonorCount">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Total Blood Requests</h3>
+
+            <p id="requestCount">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>Approved Requests</h3>
+
+            <p id="approvedRequestCount">
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- DONOR REPORT -->
+
+    <div class="report">
+
+        <h2>
+            🩸 Donor Report
+        </h2>
+
+        <div id="donorReport">
+
+            <div class="empty">
+                Loading donors...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BLOOD REQUEST REPORT -->
+
+    <div class="report">
+
+        <h2>
+            🏥 Blood Request Report
+        </h2>
+
+        <div id="requestReport">
+
+            <div class="empty">
+                Loading blood requests...
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+// ==========================================
+// BACK
+// ==========================================
+
+function goBack() {
+
+    window.location.href = "admin.html";
+
+}
+
+
+// ==========================================
+// DOWNLOAD PDF
+// ==========================================
+
+function downloadPDF() {
+
+    window.print();
+
+}
+
+
+// ==========================================
+// LOAD REPORT
+// ==========================================
+
+async function loadReport() {
+
+    try {
+
+        // ===============================
+        // LOAD DONORS
+        // ===============================
+
+        const donorResponse =
+            await fetch(
+                "http://localhost:5000/api/donors/approved"
+            );
+
+
+        const donors =
+            await donorResponse.json();
+
+
+        document.getElementById(
+            "donorCount"
+        ).innerText = donors.length;
+
+
+        document.getElementById(
+            "approvedDonorCount"
+        ).innerText = donors.length;
+
+
+        let donorHTML = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Blood Group</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>City</th>
+                        <th>Phone</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        donors.forEach((donor, index) => {
+
+            donorHTML += `
+
+                <tr>
+
+                    <td>${index + 1}</td>
+
+                    <td>${donor.name || "-"}</td>
+
+                    <td>${donor.email || "-"}</td>
+
+                    <td>${donor.blood_group || "-"}</td>
+
+                    <td>${donor.age || "-"}</td>
+
+                    <td>${donor.gender || "-"}</td>
+
+                    <td>${donor.city || "-"}</td>
+
+                    <td>${donor.phone || "-"}</td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        donorHTML += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        if (donors.length === 0) {
+
+            donorHTML = `
+
+                <div class="empty">
+                    No approved donors found.
+                </div>
+
+            `;
+
+        }
+
+
+        document.getElementById(
+            "donorReport"
+        ).innerHTML = donorHTML;
+
+
+        // ===============================
+        // LOAD BLOOD REQUESTS
+        // ===============================
+
+        const requestResponse =
+            await fetch(
+                "http://localhost:5000/api/requests/all"
+            );
+
+
+        const requests =
+            await requestResponse.json();
+
+
+        document.getElementById(
+            "requestCount"
+        ).innerText = requests.length;
+
+
+        const approvedRequests =
+            requests.filter(
+                request =>
+                    request.status &&
+                    request.status.toLowerCase() === "approved"
+            );
+
+
+        document.getElementById(
+            "approvedRequestCount"
+        ).innerText =
+            approvedRequests.length;
+
+
+        let requestHTML = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Hospital</th>
+                        <th>Patient</th>
+                        <th>Blood Group</th>
+                        <th>Units</th>
+                        <th>City</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+        `;
+
+
+        requests.forEach((request, index) => {
+
+            requestHTML += `
+
+                <tr>
+
+                    <td>${index + 1}</td>
+
+                    <td>
+                        ${request.hospital_name || "-"}
+                    </td>
+
+                    <td>
+                        ${request.patient_name || "-"}
+                    </td>
+
+                    <td>
+                        ${request.blood_group || "-"}
+                    </td>
+
+                    <td>
+                        ${request.units || "-"}
+                    </td>
+
+                    <td>
+                        ${request.city || "-"}
+                    </td>
+
+                    <td>
+                        ${request.phone || "-"}
+                    </td>
+
+                    <td>
+                        ${request.status || "Pending"}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        requestHTML += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        if (requests.length === 0) {
+
+            requestHTML = `
+
+                <div class="empty">
+                    No blood requests found.
+                </div>
+
+            `;
+
+        }
+
+
+        document.getElementById(
+            "requestReport"
+        ).innerHTML = requestHTML;
+
+
+    } catch (error) {
+
+        console.error(
+            "REPORT ERROR:",
+            error
+        );
+
+
+        document.getElementById(
+            "donorReport"
+        ).innerHTML = `
+
+            <div class="empty">
+                ❌ Failed to load donor report.
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "requestReport"
+        ).innerHTML = `
+
+            <div class="empty">
+                ❌ Failed to load blood request report.
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// ==========================================
+// START
+// ==========================================
+
+loadReport();
+
+
+</script>
+
+</body>
+
+</html>

@@ -2,65 +2,98 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// Test Route
+console.log("donorRoutes.js loaded");
+
+// TEST ROUTE
 router.get("/", (req, res) => {
-    res.send("Donor Route Working");
+    res.json({
+        success: true,
+        message: "Donor Route Working"
+    });
 });
 
-// Add Donor
-router.post("/add", (req, res) => {
+router.post("/donor", (req, res) => {
 
     const {
         name,
+        email,
+        password,
         age,
         gender,
-        email,
         blood_group,
         city,
         phone
     } = req.body;
 
+    if (
+        !name ||
+        !email ||
+        !password ||
+        !age ||
+        !gender ||
+        !blood_group ||
+        !city ||
+        !phone
+    ) {
+        return res.status(400).json({
+            message: "Please fill all donor fields"
+        });
+    }
+
     const sql = `
         INSERT INTO donors
-        (name, age, gender, email, blood_group, city, phone)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (
+            name,
+            email,
+            password,
+            age,
+            gender,
+            blood_group,
+            city,
+            phone,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
         sql,
-        [name, age, gender, email, blood_group, city, phone],
+        [
+            name,
+            email,
+            password,
+            age,
+            gender,
+            blood_group,
+            city,
+            phone,
+            "pending"
+        ],
         (err, result) => {
 
             if (err) {
-                console.log(err);
-                return res.status(500).json(err);
+
+                console.error(
+                    "DONOR REGISTRATION ERROR:",
+                    err
+                );
+
+                return res.status(500).json({
+                    message: "Failed to register donor",
+                    error: err.message
+                });
             }
 
-            res.json({
-                message: "Donor Registered Successfully"
+            return res.status(201).json({
+                success: true,
+                message:
+                    "Donor registration submitted. Please wait for admin approval.",
+                donor_id: result.insertId
             });
-
         }
     );
 });
 
-// View All Donors
-router.get("/all", (req, res) => {
-
-    db.query(
-        "SELECT * FROM donors",
-        (err, result) => {
-
-            if (err) {
-                return res.status(500).json(err);
-            }
-
-            res.json(result);
-
-        }
-    );
-
-});
 router.get("/compatible/:bloodGroup", (req, res) => {
 
     const bloodGroup = req.params.bloodGroup;
@@ -119,18 +152,29 @@ router.get("/search/:blood_group", (req, res) => {
 });
 
 // Blood Group Statistics
+// ==========================================
+// APPROVED DONOR BLOOD GROUP STATISTICS
+// ==========================================
+
 router.get("/stats", (req, res) => {
 
     const sql = `
-        SELECT blood_group,
-        COUNT(*) AS total
-        FROM donors
-        GROUP BY blood_group
+        SELECT
+            d.blood_group,
+            COUNT(*) AS total
+        FROM donors d
+        INNER JOIN users u
+            ON d.email = u.email
+        WHERE u.role = 'donor'
+        AND u.status = 'approved'
+        GROUP BY d.blood_group
+        ORDER BY d.blood_group
     `;
 
     db.query(sql, (err, result) => {
 
         if (err) {
+            console.log(err);
             return res.status(500).json(err);
         }
 
@@ -144,15 +188,22 @@ router.get("/stats", (req, res) => {
 router.get("/citystats", (req, res) => {
 
     const sql = `
-        SELECT city,
-        COUNT(*) AS total
-        FROM donors
-        GROUP BY city
+        SELECT
+            d.city,
+            COUNT(*) AS total
+        FROM donors d
+        INNER JOIN users u
+            ON d.email = u.email
+        WHERE u.role = 'donor'
+        AND u.status = 'approved'
+        GROUP BY d.city
+        ORDER BY total DESC
     `;
 
     db.query(sql, (err, result) => {
 
         if (err) {
+            console.log(err);
             return res.status(500).json(err);
         }
 
@@ -161,7 +212,6 @@ router.get("/citystats", (req, res) => {
     });
 
 });
-
 // Update Donor
 router.put("/update/:id", (req, res) => {
 
@@ -239,18 +289,119 @@ router.delete("/delete/:id", (req, res) => {
     );
 
 });
+router.get("/approved", (req, res) => {
 
-router.get("/all", (req, res) => {
+    const sql = `
+        SELECT
+            d.donor_id,
+            d.name,
+            d.age,
+            d.gender,
+            d.email,
+            d.blood_group,
+            d.city,
+            d.phone
+        FROM donors d
+        INNER JOIN users u
+            ON d.email = u.email
+        WHERE u.role = 'donor'
+        AND u.status = 'approved'
+        ORDER BY d.name ASC
+    `;
 
-    const sql = "SELECT * FROM donors";
+    db.query(sql, (err, results) => {
 
-    db.query(sql, (err, result) => {
+        if (err) {
 
-        if(err){
-            return res.status(500).json(err);
+            console.log(err);
+
+            return res.status(500).json({
+                message: "Failed to load approved donors"
+            });
+
         }
 
-        res.json(result);
+        res.json(results);
+
     });
+
+});
+// ==========================================
+// UPDATE APPROVED DONOR USER
+// ==========================================
+
+router.put("/user-update/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    const {
+        name,
+        email
+    } = req.body;
+
+    const sql = `
+        UPDATE users
+        SET name = ?, email = ?
+        WHERE id = ?
+        AND role = 'donor'
+    `;
+
+    db.query(
+        sql,
+        [name, email, id],
+        (err, result) => {
+
+            if (err) {
+
+                console.log(err);
+
+                return res.status(500).json({
+                    message: "Failed to update donor"
+                });
+            }
+
+            res.json({
+                message: "Donor updated successfully"
+            });
+
+        }
+    );
+});
+
+
+// ==========================================
+// DELETE APPROVED DONOR
+// ==========================================
+
+router.delete("/user-delete/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    const sql = `
+        DELETE FROM users
+        WHERE id = ?
+        AND role = 'donor'
+    `;
+
+    db.query(
+        sql,
+        [id],
+        (err, result) => {
+
+            if (err) {
+
+                console.log(err);
+
+                return res.status(500).json({
+                    message: "Failed to delete donor"
+                });
+            }
+
+            res.json({
+                message: "Donor deleted successfully"
+            });
+
+        }
+    );
 });
 module.exports = router;

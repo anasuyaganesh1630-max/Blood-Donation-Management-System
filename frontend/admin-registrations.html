@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Registration Requests</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(
+                135deg,
+                #b71c1c,
+                #e53935
+            );
+
+            color: white;
+            padding: 30px 50px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            font-size: 18px;
+            margin-bottom: 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1400px;
+            margin: 25px auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn,
+        .refresh-btn {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 9px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-btn {
+            background: #333;
+        }
+
+        .refresh-btn {
+            background: #d32f2f;
+        }
+
+        .requests {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(320px, 1fr));
+
+            gap: 25px;
+        }
+
+        .request-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-left: 6px solid #d32f2f;
+        }
+
+        .request-card h2 {
+            margin-top: 0;
+            color: #b71c1c;
+            font-size: 25px;
+        }
+
+        .icon {
+            font-size: 35px;
+        }
+
+        .type {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #ffe5e5;
+            color: #b71c1c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: #fff3cd;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .request-card p {
+            margin: 12px 0;
+            font-size: 16px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .approve,
+        .reject {
+            flex: 1;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .approve {
+            background: #16a34a;
+        }
+
+        .approve:hover {
+            background: #15803d;
+        }
+
+        .reject {
+            background: #dc2626;
+        }
+
+        .reject:hover {
+            background: #b91c1c;
+        }
+
+        .empty {
+            background: white;
+            padding: 60px;
+            text-align: center;
+            border-radius: 15px;
+            color: #777;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>🩸 Registration Requests</h1>
+
+    <p>
+        Review and approve donor and hospital registrations
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="top-bar">
+
+        <button
+            class="back-btn"
+            onclick="goBack()">
+
+            ← Back to Admin Dashboard
+
+        </button>
+
+
+        <button
+            class="refresh-btn"
+            onclick="loadRegistrations()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
+
+
+    <h2>
+        Pending Registrations
+    </h2>
+
+
+    <div id="requestsContainer"
+         class="requests">
+
+        <div class="empty">
+            Loading registrations...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+// ==========================================
+// BACK TO ADMIN
+// ==========================================
+
+function goBack() {
+
+    window.location.href = "admin.html";
+
+}
+
+
+
+// ==========================================
+// LOAD PENDING REGISTRATIONS
+// ==========================================
+
+async function loadRegistrations() {
+
+    const container =
+        document.getElementById(
+            "requestsContainer"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="empty">
+
+            Loading registrations...
+
+        </div>
+
+    `;
+
+
+    try {
+
+ const response = await fetch(
+    "http://localhost:5000/api/registration/pending"
+);
+
+const text = await response.text();
+
+console.log("HTTP STATUS:", response.status);
+console.log("SERVER RESPONSE:", text);
+
+if (!response.ok) {
+    throw new Error(
+        `Server returned ${response.status}: ${text}`
+    );
+}
+
+const registrations = JSON.parse(text);
+
+
+        console.log(
+            "Pending registrations:",
+            registrations
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                registrations.message ||
+                "Failed to load registrations"
+            );
+
+        }
+
+
+        if (
+            !registrations ||
+            registrations.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    <h2>
+                        🎉 No Pending Registrations
+                    </h2>
+
+                    <p>
+                        There are currently no
+                        pending donor or hospital registrations.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        registrations.forEach(registration => {
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "request-card";
+
+
+            // ------------------------------
+            // CHECK REGISTRATION TYPE
+            // ------------------------------
+
+            const isHospital =
+                registration.role === "hospital";
+
+
+            const icon =
+                isHospital ? "🏥" : "🩸";
+
+
+            const type =
+                isHospital ? "Hospital" : "Donor";
+
+
+            // ------------------------------
+            // CREATE CARD
+            // ------------------------------
+
+            card.innerHTML = `
+
+                <div class="icon">
+                    ${icon}
+                </div>
+
+                <h2>
+                    ${registration.name}
+                </h2>
+
+                <div class="type">
+                    ${type}
+                </div>
+
+                <p>
+                    <strong>Email:</strong>
+                    ${registration.email}
+                </p>
+
+                <p>
+                    <strong>Type:</strong>
+                    ${type}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+
+                    <span class="status">
+                        ${registration.status || "Pending"}
+                    </span>
+
+                </p>
+<button
+    class="approve"
+    onclick="approveRegistration(${registration.id})">
+    ✓ Approve
+</button>
+
+<button
+    class="reject"
+    onclick="rejectRegistration(${registration.id})">
+    ✕ Reject
+</button>
+
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Registration loading error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h2>
+                    ❌ Unable to Load Registrations
+                </h2>
+
+                <p>
+                    ${error.message}
+                </p>
+
+                <p>
+                    Make sure the backend is running
+                    on port 5000.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+async function updateRequestStatus(requestId, status) {
+
+    try {
+
+        console.log("Updating:", requestId, status);
+
+        const response = await fetch(
+            `http://localhost:5000/api/registrations/${requestId}/status`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        );
+
+        // First read as TEXT
+        const text = await response.text();
+
+        console.log("Server response:", text);
+
+        if (!response.ok) {
+            throw new Error(
+                `Server error ${response.status}: ${text}`
+            );
+        }
+
+        // Convert to JSON only after checking response
+        let result;
+
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            throw new Error(
+                "Backend did not return JSON. Response was: " + text
+            );
+        }
+
+        alert(
+            status === "approved"
+                ? "Registration approved successfully!"
+                : "Registration rejected successfully!"
+        );
+
+        loadRegistrations();
+
+    } catch (error) {
+
+        console.error("Status update error:", error);
+
+        alert("❌ " + error.message);
+    }
+}
+async function approveRegistration(id) {
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:5000/api/registration/approve/${id}`,
+            {
+                method: "PUT"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Approval failed");
+        }
+
+        alert(data.message);
+
+        loadRegistrations();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+    }
+}
+async function rejectRegistration(id) {
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:5000/api/registration/reject/${id}`,
+            {
+                method: "PUT"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Rejection failed");
+        }
+
+        alert(data.message);
+
+        loadRegistrations();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+    }
+}
+loadRegistrations();
+
+
+</script>
+
+
+</body>
+
+</html>

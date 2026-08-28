@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Approved Donors</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+        }
+
+        header {
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn,
+        .refresh-btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: #333;
+        }
+
+        .refresh-btn {
+            background: #c62828;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #c62828;
+            color: white;
+            padding: 14px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #fff5f5;
+        }
+
+        .blood {
+            font-weight: bold;
+            color: #c62828;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+        .count {
+            background: #ffe5e5;
+            color: #b71c1c;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+    </style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>🩸 Approved Donors</h1>
+    <p>Donors verified and approved by the administrator</p>
+</header>
+
+<div class="container">
+
+    <div class="top-bar">
+
+        <button class="back-btn" onclick="goBack()">
+            ← Back to Admin
+        </button>
+
+        <span id="donorCount" class="count">
+            Donors: 0
+        </span>
+
+        <button class="refresh-btn" onclick="loadDonors()">
+            🔄 Refresh
+        </button>
+
+    </div>
+    <div class="table-container">
+
+        <div id="donorContainer" class="empty">
+            Loading approved donors...
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function loadDonors() {
+
+    const container =
+        document.getElementById("donorContainer");
+
+    container.innerHTML = `
+        <div class="empty">
+            Loading approved donors...
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/donors/approved"
+        );
+
+        const donors = await response.json();
+
+        if (!response.ok) {
+            throw new Error("Failed to load donors");
+        }
+
+        document.getElementById("donorCount").innerText =
+            "Donors: " + donors.length;
+
+
+        if (donors.length === 0) {
+
+            container.innerHTML = `
+                <div class="empty">
+                    <h3>🩸 No Approved Donors</h3>
+                    <p>
+                        No donors have been approved by the administrator yet.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = `
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Blood Group</th>
+                        <th>City</th>
+                        <th>Phone</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+        `;
+
+
+        donors.forEach((donor, index) => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${donor.name || "-"}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${donor.email || "-"}
+                    </td>
+
+                    <td class="blood">
+                        🩸 ${donor.blood_group || "-"}
+                    </td>
+
+                    <td>
+                        📍 ${donor.city || "-"}
+                    </td>
+
+                    <td>
+                        📞 ${donor.phone || "-"}
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+
+        html += `
+
+                </tbody>
+
+            </table>
+
+        `;
+
+        container.innerHTML = html;
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        document.getElementById("donorCount").innerText =
+            "Donors: 0";
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                ❌ Cannot load approved donors.
+
+                <br><br>
+
+                Make sure the backend server is running.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// Back to admin dashboard
+function goBack() {
+
+    window.location.href = "admin.html";
+
+}
+
+
+// Load donors when page opens
+loadDonors();
+
+</script>
+
+</body>
+
+</html>

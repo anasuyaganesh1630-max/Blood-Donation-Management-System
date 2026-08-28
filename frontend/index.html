@@ -1,694 +1,441 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Blood Donation Management</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Blood Donation Management System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    rgba(120, 0, 0, 0.75),
+                    rgba(120, 0, 0, 0.75)
+                ),
+                url("blood-bg.jpg");
+
+            background-size: cover;
+            background-position: center;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* NAVBAR */
+
+        nav {
+            height: 75px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 50px;
+
+            box-shadow:
+                0 3px 15px rgba(0,0,0,0.15);
+        }
+
+
+        .logo {
+            color: #b71c1c;
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+
+        .logo span {
+            color: #333;
+            font-size: 13px;
+            display: block;
+            margin-top: 3px;
+        }
+
+
+        /* HERO */
+
+        .hero {
+            flex: 1;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            color: white;
+
+            padding: 50px 20px;
+        }
+
+
+        .blood-icon {
+            font-size: 75px;
+
+            animation:
+                pulse 1.5s infinite;
+        }
+
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
+        }
+
+
+        .hero h1 {
+            font-size: 48px;
+            margin: 20px 0 10px;
+        }
+
+
+        .hero h2 {
+            font-size: 25px;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+
+
+        .hero p {
+            font-size: 18px;
+            max-width: 650px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+
+        /* BUTTONS */
+
+        .buttons {
+
+            display: flex;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+
+            justify-content: center;
+
+        }
+
+
+        .main-btn {
+
+            border: none;
+
+            padding: 16px 28px;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition: 0.3s;
+
+            min-width: 190px;
+
+        }
+
+
+        .donor-btn {
+
+            background: #e53935;
+            color: white;
+        }
+
+
+        .request-btn {
+
+            background: white;
+            color: #b71c1c;
+        }
+
+
+        .admin-btn {
+
+            background: #212121;
+            color: white;
+        }
+
+
+        .main-btn:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.25);
+
+        }
+
+
+        /* FEATURES */
+
+        .features {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+
+            margin-top: 35px;
+
+        }
+
+
+        .feature {
+
+            background:
+                rgba(255,255,255,0.15);
+
+            border:
+                1px solid rgba(255,255,255,0.3);
+
+            padding: 15px 25px;
+
+            border-radius: 10px;
+
+            color: white;
+
+            min-width: 160px;
+
+        }
+
+
+        .feature strong {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        /* FOOTER */
+
+        footer {
+
+            background: rgba(0,0,0,0.75);
+
+            color: white;
+
+            text-align: center;
+
+            padding: 15px;
+
+            font-size: 14px;
+
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            nav {
+                padding: 0 20px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero h2 {
+                font-size: 20px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .main-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
-    <nav>
 
-    <h2>🩸 Blood Bank</h2>
 
-    <ul>
+<!-- NAVBAR -->
 
-        <li><a href="index.html">Home</a></li>
-<li><a href="index.html#donors">Donors</a></li>
-<li><a href="hospital.html">Requests</a></li>
-<li><a href="about.html">About</a></li>
-    </ul>
+<nav>
+
+    <div class="logo">
+
+        🩸 BLOOD BANK
+
+        <span>
+            Save Blood, Save Lives
+        </span>
+
+    </div>
 
 </nav>
 
-<div class="container">
 
-<div class="hero">
 
-    <img
-    src="https://cdn-icons-png.flaticon.com/512/2069/2069768.png"
-    width="100"
-    alt="Blood Drop">
+<!-- HERO -->
 
-    
-<h1>🩸Blood Donation Management System</h1>
-<p>Connecting Blood Donors and Hospitals Across Kerala</p>
-    <p>Donate Blood, Save Lives ❤️</p>
+<section class="hero">
 
-</div>
 
-<div class="about">
-
-<h2>About Blood Donation</h2>
-
-<p>
-Blood donation is a life-saving act that helps hospitals
-provide emergency treatment to patients.
-Every donation can save up to 3 lives.
-</p>
-
-</div>
-
-<div class="stats-container">
-
-    <div class="stat-card total-card">
-        <h3>Total Donors</h3>
-        <p id="totalDonors">0</p>
+    <div class="blood-icon">
+        🩸
     </div>
 
-</div>
-<div class="availability">
-   <h2 class="availability-title">🩸 Blood Availability</h2>
 
-<div class="blood-availability">
+    <h1>
+        Blood Donation Management System
+    </h1>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>A+</h3>
-        <p id="AplusCount">0</p>
-      
-    </div>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>A-</h3>
-        <p id="AminusCount">0</p>
-       
-    </div>
+    <h2>
+        Every Drop Counts. Every Life Matters.
+    </h2>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>B+</h3>
-        <p id="BplusCount">0</p>
-       
-    </div>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>B-</h3>
-        <p id="BminusCount">0</p>
-       
-    </div>
+    <p>
+        Connect blood donors with people and hospitals
+        who need blood. Register as a donor, submit a
+        blood request, or access the administrator portal.
+    </p>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>AB+</h3>
-        <p id="ABplusCount">0</p>
-       
-    </div>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>AB-</h3>
-        <p id="ABminusCount">0</p>
-        
-    </div>
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>O+</h3>
-        <p id="OplusCount">0</p>
-      
-    </div>
+    <!-- MAIN BUTTONS -->
 
-    <div class="blood-card">
-        <div class="blood-icon">🩸</div>
-        <h3>O-</h3>
-        <p id="OminusCount">0</p>
-       
-    </div>
+    <div class="buttons">
 
-</div>
 
-<section class="register-section">
+        <!-- DONOR REGISTRATION -->
 
-    <div class="register-card">
+        <a
+            href="donor-registration.html"
+            class="main-btn donor-btn">
 
-        <h2>📝 Donor Registration</h2>
+            🩸 Register as Donor
 
-        <form id="donorForm">
+        </a>
 
-            <input
-                type="text"
-                id="name"
-                placeholder="Full Name"
-                required>
-<input
-    type="number"
-    id="age"
-    placeholder="Age"
-    required>
-            <select id="gender" required>
-                <option value="">Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-            </select>
 
-            <input
-                type="email"
-                id="email"
-                placeholder="Email Address"
-                required>
 
-            <select id="blood_group" required>
-                <option value="">Select Blood Group</option>
-                <option>A+</option>
-                <option>A-</option>
-                <option>B+</option>
-                <option>B-</option>
-                <option>AB+</option>
-                <option>AB-</option>
-                <option>O+</option>
-                <option>O-</option>
-            </select>
+        <!-- BLOOD REQUEST -->
 
-            <select id="city" required>
-                <option value="">Select District</option>
-                <option>Thiruvananthapuram</option>
-                <option>Kollam</option>
-                <option>Pathanamthitta</option>
-                <option>Alappuzha</option>
-                <option>Kottayam</option>
-                <option>Idukki</option>
-                <option>Ernakulam</option>
-                <option>Thrissur</option>
-                <option>Palakkad</option>
-                <option>Malappuram</option>
-                <option>Kozhikode</option>
-                <option>Wayanad</option>
-                <option>Kannur</option>
-                <option>Kasaragod</option>
-            </select>
+        <a
+            href="hospital-request.html"
+            class="main-btn request-btn">
 
-            <input
-                type="text"
-                id="phone"
-                placeholder="Phone Number"
-                required>
+            🏥 Blood Request
 
-            <button type="submit" class="register-btn">
-                Register Donor
-            </button>
+        </a>
 
-        </form>
+
+
+        <!-- ADMIN LOGIN -->
+
+        <a
+            href="login.html"
+            class="main-btn admin-btn">
+
+            🔐 Admin Login
+
+        </a>
+
 
     </div>
+
+
+
+    <!-- FEATURES -->
+
+    <div class="features">
+
+        <div class="feature">
+
+            <strong>❤️ Save Lives</strong>
+
+            Every donation matters.
+
+        </div>
+
+
+        <div class="feature">
+
+            <strong>🔒 Secure</strong>
+
+            Protected user records.
+
+        </div>
+
+
+        <div class="feature">
+
+            <strong>⚡ Fast</strong>
+
+            Quick blood matching.
+
+        </div>
+
+
+    </div>
+
 
 </section>
 
-<br>
 
-<input type="text" id="searchBlood" placeholder="Enter Blood Group">
 
-<button type="button" id="searchBtn">Search Donors</button>
+<footer>
 
-<button type="button" id="viewBtn">View Donors</button>
+    🩸 Blood Bank Management System
 
-<p id="msg"></p>
+</footer>
 
-<div id="donorList"></div>
-<button onclick="downloadDonorPDF()" class="download-btn">
-    <i class="fas fa-file-pdf"></i>
-    Download Donors PDF
-</button>
-<script>
 
-// Register Donor
-document.getElementById("donorForm")
-.addEventListener("submit", async (e) => {
-
-    e.preventDefault();
-
-    const donor = {
-        name: document.getElementById("name").value,
-        age: document.getElementById("age").value,
-        gender: document.getElementById("gender").value,
-        email: document.getElementById("email").value,
-        blood_group: document.getElementById("blood_group").value,
-        city: document.getElementById("city").value,
-        phone: document.getElementById("phone").value
-    };
-
-    try {
-
-        const response = await fetch(
-            "http://localhost:5000/api/donors/add",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(donor)
-            }
-        );
-
-        const data = await response.json();
-
-        document.getElementById("msg").innerHTML =
-            `<span style="color:green">${data.message}</span>`;
-
-        document.getElementById("donorForm").reset();
-
-        loadStats();
-        loadBloodAvailability();
-        loadTotalDonors();
-
-    } catch (error) {
-
-        console.log(error);
-
-        document.getElementById("msg").innerHTML =
-            `<span style="color:red">Registration Failed</span>`;
-    }
-});
-// View All Donors
-document.getElementById("viewBtn").addEventListener("click", async () => {
-
-    const response = await fetch("http://localhost:5000/api/donors/all");
-
-    const donors = await response.json();
-
-    let html = `
-        <h2>Donors List</h2>
-
-        <table border="1">
-            <tr>
-                <th>Name</th>
-                 <th>Age</th>
-                 <th>Gender</th>
-                <th>Blood Group</th>
-                <th>City</th>
-                <th>Actions</th>
-            </tr>
-    `;
-
-    donors.forEach((donor) => {
-
-        html += `
-            <tr>
-                <td>${donor.name}</td>
-                <td>${donor.age}</td>
-                <td>${donor.gender}</td>
-                <td>${donor.blood_group}</td>
-                <td>${donor.city}</td>
-
-<td>
-    <button onclick="deleteDonor(${donor.donor_id})">
-        Delete
-    </button>
-
-    <button onclick="editDonor(${donor.donor_id})">
-        Edit
-    </button>
-</td>
-            </tr>
-        `;
-
-    });
-
-    html += "</table>";
-
-    document.getElementById("donorList").innerHTML = html;
-
-});
-
-
-// Search Donors by Blood Group
-document.getElementById("searchBtn").addEventListener("click", async () => {
-
-    const bloodGroup = document.getElementById("searchBlood").value;
-
-    const response = await fetch(
-        `http://localhost:5000/api/donors/search/${bloodGroup}`
-    );
-
-    const donors = await response.json();
-
-    let html = `
-        <h2>Search Results</h2>
-        <table border="1">
-            <tr>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Gender</th>
-                <th>Blood Group</th>
-                <th>City</th>
-            </tr>
-    `;
-
-    donors.forEach((donor) => {
-
-        html += `
-            <tr>
-                <td>${donor.name}</td>
-                <td>${donor.age}</td>
-                <td>${donor.gender}</td>
-                <td>${donor.blood_group}</td>
-                <td>${donor.city}</td>
-            </tr>
-        `;
-
-    });
-
-    html += "</table>";
-
-    document.getElementById("donorList").innerHTML = html;
-
-});
-async function loadStats(){
-
-    const response =
-    await fetch("http://localhost:5000/api/donors/stats");
-
-    const data = await response.json();
-
-    let total = 0;
-
-    data.forEach(item => {
-
-        total += item.total;
-
-        if(item.blood_group === "A+"){
-            document.getElementById("aPlus").innerText = item.total;
-            document.getElementById("AplusCount").innerText = item.total;
-        }
-
-        if(item.blood_group === "B+"){
-            document.getElementById("bPlus").innerText = item.total;
-            document.getElementById("BplusCount").innerText = item.total;
-        }
-
-        if(item.blood_group === "O+"){
-            document.getElementById("oPlus").innerText = item.total;
-            document.getElementById("OplusCount").innerText = item.total;
-        }
-
-        if(item.blood_group === "AB+"){
-            document.getElementById("ABplusCount").innerText = item.total;
-        }
-
-    });
-
-    document.getElementById("totalDonors").innerText = total;
-}
-loadStats();
-async function deleteDonor(id){
-
-    const response = await fetch(
-        `http://localhost:5000/api/donors/delete/${id}`,
-        {
-            method: "DELETE"
-        }
-    );
-
-    const data = await response.json();
-
-    alert(data.message);
-
-    location.reload();
-}
-async function editDonor(id){
-
-    const name = prompt("Enter New Name");
-    const age= prompt("Enter New Age");
-    const gender= prompt("Enter Gender");
-    const email = prompt("Enter New Email");
-    const blood_group = prompt("Enter New Blood Group");
-    const city = prompt("Enter New City");
-    const phone = prompt("Enter New Phone");
-
-    const response = await fetch(
-        `http://localhost:5000/api/donors/update/${id}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name,
-                age,
-                gender,                                                                                                                                                 
-                email,
-                blood_group,
-                city,
-                phone
-            })
-        }
-    );
-
-    const data = await response.json();
-
-    alert(data.message);
-
-    location.reload();
-}
-async function loadStats(){
-
-    const response =
-    await fetch(
-        "http://localhost:5000/api/donors/stats"
-    );
-
-    const data =
-    await response.json();
-
-    let total = 0;
-
-    data.forEach(item => {
-
-        total += item.total;
-
-        if(item.blood_group === "A+"){
-            document.getElementById("aPlus").innerText =
-            item.total;
-        }
-
-        if(item.blood_group === "B+"){
-            document.getElementById("bPlus").innerText =
-            item.total;
-        }
-
-        if(item.blood_group === "O+"){
-            document.getElementById("oPlus").innerText =
-            item.total;
-        }
-
-    });
-
-    document.getElementById("totalDonors")
-    .innerText = total;
-}
-
-loadStats();
-async function loadBloodAvailability(){
-
-    const response = await fetch(
-        "http://localhost:5000/api/donors/all"
-    );
-
-    const donors = await response.json();
-
-    let counts = {
-        "A+":0,
-        "A-":0,
-        "B+":0,
-        "B-":0,
-        "AB+":0,
-        "AB-":0,
-        "O+":0,
-        "O-":0
-    };
-
-    donors.forEach(donor => {
-
-        if(counts.hasOwnProperty(donor.blood_group)){
-            counts[donor.blood_group]++;
-        }
-
-    });
-
-    document.getElementById("AplusCount").innerText = counts["A+"];
-    document.getElementById("AminusCount").innerText = counts["A-"];
-    document.getElementById("BplusCount").innerText = counts["B+"];
-    document.getElementById("BminusCount").innerText = counts["B-"];
-    document.getElementById("ABplusCount").innerText = counts["AB+"];
-    document.getElementById("ABminusCount").innerText = counts["AB-"];
-    document.getElementById("OplusCount").innerText = counts["O+"];
-    document.getElementById("OminusCount").innerText = counts["O-"];
-
-}
-loadBloodAvailability();
-async function loadTotalDonors(){
-
-    try{
-
-        const response = await fetch(
-            "http://localhost:5000/api/donors/all"
-        );
-
-        const donors = await response.json();
-
-        document.getElementById("totalDonors").innerText =
-        donors.length;
-
-    }
-    catch(error){
-
-        console.log(error);
-
-    }
-
-}
-loadTotalDonors();
-html += `
-<div class="donor-card">
-    <h3>${donor.name}</h3>
-    <p><strong>Gender:</strong> ${donor.gender}</p>
-    <p><strong>Blood Group:</strong> ${donor.blood_group}</p>
-    <p><strong>City:</strong> ${donor.city}</p>
-    <p><strong>Phone:</strong> ${donor.phone}</p>
-</div>
-`;
-let notifications = [];
-
-function addNotification(message){
-
-    notifications.unshift(message);
-
-    document.getElementById("notificationCount").innerText =
-    notifications.length;
-
-    let html = "";
-
-    notifications.forEach(note => {
-
-        html += `
-        <div class="notification-item">
-            ${note}
-        </div>
-        `;
-
-    });
-
-    document.getElementById("notificationList").innerHTML = html;
-}
-
-function toggleNotifications(){
-
-    const panel =
-    document.getElementById("notificationPanel");
-
-    panel.style.display =
-    panel.style.display === "block"
-    ? "none"
-    : "block";
-}
-async function downloadDonorPDF() {
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const response = await fetch(
-        "http://localhost:5000/api/donors/all"
-    );
-
-    const donors = await response.json();
-
-    // Header
-    doc.setFillColor(214,40,40);
-    doc.rect(0,0,210,25,"F");
-
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(20);
-    doc.text("Blood Donor Report",60,15);
-
-    doc.setTextColor(0,0,0);
-    doc.setFontSize(11);
-
-    doc.text(
-        "Generated: " + new Date().toLocaleString(),
-        14,
-        35
-    );
-
-    let y = 50;
-
-    // Table Header
-    doc.setFillColor(214,40,40);
-    doc.rect(10,y,190,10,"F");
-
-    doc.setTextColor(255,255,255);
-
-    doc.text("Name",12,y+7);
-    doc.text("Blood",60,y+7);
-    doc.text("District",100,y+7);
-    doc.text("Phone",150,y+7);
-
-    y += 15;
-
-    doc.setTextColor(0,0,0);
-
-    donors.forEach((donor) => {
-
-        doc.text(
-            donor.name || "-",
-            12,
-            y
-        );
-
-        doc.text(
-            donor.blood_group || "-",
-            60,
-            y
-        );
-
-        doc.text(
-            donor.city || "-",
-            100,
-            y
-        );
-
-        doc.text(
-            donor.phone || "-",
-            150,
-            y
-        );
-
-        y += 10;
-
-        if(y > 270){
-            doc.addPage();
-            y = 20;
-        }
-    });
-
-    // Footer
-    doc.setFontSize(10);
-
-    doc.text(
-        "Blood Bank Management System",
-        65,
-        290
-    );
-
-    doc.save("Blood_Donor_Report.pdf");
-}
-</script>
-<div class="contact-section">
-
-<h2>Contact Us</h2>
-
-<p>📞 Phone: +91 9876543210</p>
-
-<p>📧 Email: bloodbank@gmail.com</p>
-
-<p>📍 Location: Kollam, Kerala</p>
-
-</div>
-<div class="footer">
-    Save Lives • Donate Blood ❤️
-</div>
-
-</div>
 </body>
+
 </html>

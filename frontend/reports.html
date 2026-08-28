@@ -1,86 +1,452 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reports Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
 
-<link rel="stylesheet" href="reports.css">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reports Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="reports.css">
+
 </head>
+
 <body>
 
 <nav>
+
     <h2>📊 Reports Dashboard</h2>
 
-    <a href="hospital.html">← Back to Dashboard</a>
+    <a href="admin.html">
+        ← Back to Admin
+    </a>
+
 </nav>
+
 
 <div class="container">
 
-    <div class="chart-card">
-        <h2>📈 Monthly Requests</h2>
-        <canvas id="monthlyRequestsChart"></canvas>
+    <!-- ===================================== -->
+    <!-- SUMMARY -->
+    <!-- ===================================== -->
+
+    <div class="summary-container">
+
+        <div class="summary-card">
+            <h3>🩸 Approved Donors</h3>
+            <p id="totalDonors">0</p>
+        </div>
+
+
+        <div class="summary-card">
+            <h3>⏳ Pending Registrations</h3>
+            <p id="pendingRegistrations">0</p>
+        </div>
+
     </div>
 
+
+    <!-- ===================================== -->
+    <!-- DONOR BLOOD GROUP -->
+    <!-- ===================================== -->
+
     <div class="chart-card">
-        <h2>🩸 Blood Group Distribution</h2>
+
+        <h2>🩸 Approved Donors by Blood Group</h2>
+
         <canvas id="bloodGroupChart"></canvas>
+
     </div>
+
+
+    <!-- ===================================== -->
+    <!-- DONOR CITY -->
+    <!-- ===================================== -->
 
     <div class="chart-card">
-        <h2>👥 Donor Growth</h2>
-        <canvas id="donorGrowthChart"></canvas>
+
+        <h2>📍 Approved Donors by City</h2>
+
+        <canvas id="cityChart"></canvas>
+
     </div>
 
-</div>
+
+
+
+
+    <!-- ===================================== -->
+    <!-- REQUEST BLOOD GROUP -->
+    <!-- ===================================== -->
+
+
+
 
 <script>
 
-// Monthly Requests
-new Chart(
-document.getElementById("monthlyRequestsChart"),
-{
-    type:"bar",
-    data:{
-        labels:["Jan","Feb","Mar","Apr","May","Jun"],
-        datasets:[{
-            label:"Requests",
-            data:[12,18,25,30,22,35]
-        }]
-    }
-});
 
-// Blood Group Distribution
-new Chart(
-document.getElementById("bloodGroupChart"),
-{
-    type:"pie",
-    data:{
-        labels:["A+","A-","B+","B-","AB+","AB-","O+","O-"],
-        datasets:[{
-            data:[25,8,18,5,12,3,30,6]
-        }]
-    }
-});
+// =====================================================
+// GLOBAL DATA
+// =====================================================
 
-// Donor Growth
-new Chart(
-document.getElementById("donorGrowthChart"),
-{
-    type:"line",
-    data:{
-        labels:["Jan","Feb","Mar","Apr","May","Jun"],
-        datasets:[{
-            label:"Donors",
-            data:[50,80,120,170,220,280],
-            fill:false
-        }]
+let approvedDonors = [];
+
+
+let pendingRegistrations = [];
+
+
+// =====================================================
+// LOAD APPROVED DONORS
+// =====================================================
+
+async function loadApprovedDonors() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/donors/approved"
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load approved donors"
+            );
+
+        }
+
+        approvedDonors = await response.json();
+
+        console.log(
+            "Approved Donors:",
+            approvedDonors
+        );
+
+
+        document.getElementById(
+            "totalDonors"
+        ).innerText = approvedDonors.length;
+
+
+        createBloodGroupChart();
+
+        createCityChart();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "totalDonors"
+        ).innerText = "Error";
+
     }
-});
+
+}
+
+
+// =====================================================
+// LOAD BLOOD REQUESTS
+// =====================================================
+
+
+
+// =====================================================
+// LOAD PENDING REGISTRATIONS
+// =====================================================
+
+async function loadPendingRegistrations() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/registration/pending"
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to load registrations"
+            );
+
+        }
+
+        pendingRegistrations =
+            await response.json();
+
+
+        document.getElementById(
+            "pendingRegistrations"
+        ).innerText =
+            pendingRegistrations.length;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "pendingRegistrations"
+        ).innerText = "Error";
+
+    }
+
+}
+
+
+// =====================================================
+// BLOOD GROUP CHART
+// =====================================================
+
+function createBloodGroupChart() {
+
+    const groups = [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+    ];
+
+
+    const counts = groups.map(group => {
+
+        return approvedDonors.filter(
+            donor =>
+                donor.blood_group === group
+        ).length;
+
+    });
+
+
+    new Chart(
+        document.getElementById(
+            "bloodGroupChart"
+        ),
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: groups,
+
+                datasets: [{
+
+                    label:
+                        "Approved Donors",
+
+                    data: counts
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+}
+
+
+// =====================================================
+// CITY CHART
+// =====================================================
+
+function createCityChart() {
+
+    const cityCounts = {};
+
+
+    approvedDonors.forEach(donor => {
+
+        const city =
+            donor.city || "Unknown";
+
+
+        if (!cityCounts[city]) {
+
+            cityCounts[city] = 0;
+
+        }
+
+        cityCounts[city]++;
+
+    });
+
+
+    const labels =
+        Object.keys(cityCounts);
+
+    const counts =
+        Object.values(cityCounts);
+
+
+    new Chart(
+        document.getElementById(
+            "cityChart"
+        ),
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [{
+
+                    label:
+                        "Approved Donors",
+
+                    data: counts
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+}
+
+
+
+function createRequestBloodChart() {
+
+    const groups = [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+    ];
+
+
+    const counts = groups.map(group => {
+
+        return bloodRequests.filter(
+            request =>
+                request.blood_group === group
+        ).length;
+
+    });
+
+
+    new Chart(
+        document.getElementById(
+            "requestBloodChart"
+        ),
+        {
+
+            type: "bar",
+
+            data: {
+
+                labels: groups,
+
+                datasets: [{
+
+                    label:
+                        "Blood Requests",
+
+                    data: counts
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+}
+
+
+// =====================================================
+// LOAD EVERYTHING
+// =====================================================
+
+loadApprovedDonors();
+
+loadPendingRegistrations();
+
 
 </script>
 
 </body>
+
 </html>

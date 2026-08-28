@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Admin Notifications</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    background: #f4f6f9;
+
+}
+
+header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #b71c1c,
+            #e53935
+        );
+
+    color: white;
+
+    padding: 30px;
+
+    text-align: center;
+
+}
+
+header h1 {
+
+    margin: 0;
+
+}
+
+.container {
+
+    width: 90%;
+
+    max-width: 1000px;
+
+    margin: 30px auto;
+
+}
+
+.back-btn {
+
+    background: #333;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    margin-bottom: 25px;
+
+}
+
+.back-btn:hover {
+
+    background: #111;
+
+}
+
+.notification {
+
+    background: white;
+
+    padding: 20px;
+
+    margin-bottom: 15px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.08);
+
+    border-left: 5px solid #e53935;
+
+}
+
+.notification h3 {
+
+    margin-top: 0;
+
+    color: #b71c1c;
+
+}
+
+.notification p {
+
+    margin-bottom: 0;
+
+}
+
+.critical {
+
+    border-left-color: #7f0000;
+
+}
+
+.urgent {
+
+    border-left-color: #f57c00;
+
+}
+
+.registration {
+
+    border-left-color: #16a34a;
+
+}
+
+.empty {
+
+    background: white;
+
+    padding: 40px;
+
+    text-align: center;
+
+    border-radius: 12px;
+
+}
+
+.refresh {
+
+    background: #d32f2f;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    float: right;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>🔔 Admin Notifications</h1>
+
+<p>
+System notifications and important activities
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<button
+    class="back-btn"
+    onclick="goBack()">
+
+    ← Back to Admin
+
+</button>
+
+
+<button
+    class="refresh"
+    onclick="loadNotifications()">
+
+    🔄 Refresh
+
+</button>
+
+
+<div style="clear:both;"></div>
+
+<br>
+
+
+<div id="notifications">
+
+    <div class="empty">
+        Loading notifications...
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+// =====================================================
+// BACK TO ADMIN
+// =====================================================
+
+function goBack() {
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+// =====================================================
+// LOAD NOTIFICATIONS
+// =====================================================
+
+async function loadNotifications() {
+
+    const container =
+        document.getElementById(
+            "notifications"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="empty">
+            Loading notifications...
+        </div>
+
+    `;
+
+
+    let notifications = [];
+
+
+    // =================================================
+    // PENDING REGISTRATIONS
+    // =================================================
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/registration/pending"
+        );
+
+
+        const registrations =
+            await response.json();
+
+
+        registrations.forEach(user => {
+
+            if (user.role === "donor") {
+
+                notifications.push({
+
+                    type: "registration",
+
+                    title:
+                        "🩸 New Donor Registration",
+
+                    message:
+                        `${user.name} has registered as a donor and is waiting for admin approval.`
+
+                });
+
+            }
+
+
+            if (user.role === "hospital") {
+
+                notifications.push({
+
+                    type: "registration",
+
+                    title:
+                        "🏥 New Hospital Registration",
+
+                    message:
+                        `${user.name} has registered as a hospital and is waiting for admin approval.`
+
+                });
+
+            }
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Registration error:",
+            error
+        );
+
+    }
+
+
+    // =================================================
+    // BLOOD REQUESTS
+    // =================================================
+// =================================================
+// BLOOD REQUESTS
+// =================================================
+
+try {
+
+    const response = await fetch(
+        "http://localhost:5000/api/requests/all"
+    );
+
+    const requests = await response.json();
+
+    if (!response.ok) {
+        throw new Error("Failed to load blood requests");
+    }
+
+    requests.forEach(request => {
+
+        // Show notification for pending requests
+        if (
+            request.status &&
+            request.status.toLowerCase() === "pending"
+        ) {
+
+            notifications.push({
+
+                type: "critical",
+
+                title: "🩸 New Blood Request",
+
+                message:
+                    `${request.hospital_name || "Hospital"} requested ` +
+                    `${request.units || 0} unit(s) of ` +
+                    `${request.blood_group || "blood"} ` +
+                    `for patient ${request.patient_name || "N/A"}.`
+
+            });
+
+        }
+
+    });
+
+} catch (error) {
+
+    console.error(
+        "Blood request notification error:",
+        error
+    );
+
+}
+
+
+    // =================================================
+    // NO NOTIFICATIONS
+    // =================================================
+
+    if (notifications.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h2>
+                    🎉 No New Notifications
+                </h2>
+
+                <p>
+                    There are currently no pending
+                    registrations or urgent blood requests.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // =================================================
+    // DISPLAY NOTIFICATIONS
+    // =================================================
+
+    container.innerHTML = "";
+
+
+    notifications.forEach(notification => {
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            `notification ${notification.type}`;
+
+
+        div.innerHTML = `
+
+            <h3>
+                ${notification.title}
+            </h3>
+
+            <p>
+                ${notification.message}
+            </p>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+loadNotifications();
+
+
+</script>
+
+
+</body>
+
+</html>

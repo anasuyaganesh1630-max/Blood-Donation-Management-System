@@ -1,35 +1,52 @@
-async function submitRequest() {
+async function submitRequest(event) {
+
+    if (event) {
+        event.preventDefault();
+    }
 
     const data = {
+        hospital_name: document.getElementById("hospital").value,
         patient_name: document.getElementById("patient_name").value,
         age: document.getElementById("age").value,
         gender: document.getElementById("gender").value,
+        patient_status: document.getElementById("patient_status").value,
         blood_group: document.getElementById("blood_group").value,
-        hospital: document.getElementById("hospital_name").value,
+        units: document.getElementById("units").value,
         city: document.getElementById("city").value,
-        priority: document.getElementById("priority").value
+        phone: document.getElementById("phone").value,
+        reason: document.getElementById("reason").value
     };
 
-    const response = await fetch(
-        "http://localhost:5000/api/requests/add",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/blood_Requests/add",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(result.message);
+            return;
         }
-    );
 
-    const result = await response.json();
+        alert("Blood request submitted successfully!");
 
-    alert(result.message);
-addNotification(
-    "New blood request submitted for " +
-    data.patient_name +
-    " (" +
-    data.blood_group +
-    ")"
-);
-    document.getElementById("requestForm").reset();
+        document.getElementById("bloodRequestForm").reset();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Cannot connect to server. Make sure your backend is running."
+        );
+    }
 }

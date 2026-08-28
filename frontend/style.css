@@ -461,3 +461,18 @@ select:focus{
 .request-table td{
     font-size:12px;
 }
+.reject {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 11px;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.reject:hover {
+    background: #b91c1c;
+}

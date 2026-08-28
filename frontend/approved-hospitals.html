@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Approved Hospitals</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: linear-gradient(135deg, #c9151b, #ed2b2f);
+            color: white;
+            padding: 35px 60px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 19px;
+        }
+
+        /* TOP BUTTONS */
+
+        .top-section {
+            max-width: 1200px;
+            margin: 35px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn,
+        .refresh-btn {
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            background: #333;
+            color: white;
+        }
+
+        .refresh-btn {
+            background: #e52b2f;
+            color: white;
+        }
+
+        .back-btn:hover,
+        .refresh-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* TITLE */
+
+        .page-title {
+            max-width: 1200px;
+            margin: 0 auto 25px;
+        }
+
+        .page-title h2 {
+            color: #333;
+            font-size: 28px;
+        }
+
+        /* CARDS */
+
+        #hospitalContainer {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            padding-bottom: 50px;
+        }
+
+        .hospital-card {
+            background: white;
+            border-left: 6px solid #e52b2f;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        .hospital-card h3 {
+            color: #c9151b;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .blood-group {
+            display: inline-block;
+            background: #ffe1e3;
+            color: #c9151b;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .hospital-card p {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .hospital-card strong {
+            color: #222;
+        }
+
+        .approved-status {
+            display: inline-block;
+            background: #d9f7df;
+            color: #168534;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* EMPTY */
+
+        .empty-message {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 60px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        .empty-message h2 {
+            color: #c9151b;
+            margin-bottom: 10px;
+        }
+
+        /* ERROR */
+
+        .error-message {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            color: #d71920;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+
+            #hospitalContainer {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 20px;
+            }
+
+            .top-section,
+            .page-title {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            #hospitalContainer {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 30px 25px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .top-section {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>🏥 Approved Hospitals</h1>
+
+        <p>
+            View hospitals with approved blood requests
+        </p>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="top-section">
+
+        <button class="back-btn" onclick="goBack()">
+            ← Back to Admin
+        </button>
+
+        <button class="refresh-btn" onclick="loadApprovedHospitals()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+
+    <!-- TITLE -->
+
+    <div class="page-title">
+
+        <h2>
+            Approved Blood Requests
+        </h2>
+
+    </div>
+
+
+    <!-- CARDS -->
+
+    <div id="hospitalContainer">
+
+        <div class="empty-message">
+            <h2>Loading...</h2>
+            <p>Please wait...</p>
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // ==========================================
+        // LOAD APPROVED BLOOD REQUESTS
+        // ==========================================
+
+        async function loadApprovedHospitals() {
+
+            const container =
+                document.getElementById("hospitalContainer");
+
+            container.innerHTML = `
+                <div class="empty-message">
+                    <h2>Loading...</h2>
+                    <p>Please wait...</p>
+                </div>
+            `;
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:5000/api/requests/approved"
+                );
+
+                const data = await response.json();
+
+                console.log("Approved requests:", data);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Failed to load approved hospitals"
+                    );
+
+                }
+
+
+                container.innerHTML = "";
+
+
+                // NO APPROVED REQUESTS
+
+                if (data.length === 0) {
+
+                    container.innerHTML = `
+                        <div class="empty-message">
+
+                            <h2>
+                                🏥 No Approved Hospitals
+                            </h2>
+
+                            <p>
+                                No approved blood requests are available.
+                            </p>
+
+                        </div>
+                    `;
+
+                    return;
+                }
+
+
+                // CREATE CARDS
+
+                data.forEach(request => {
+
+                    const card =
+                        document.createElement("div");
+
+                    card.className =
+                        "hospital-card";
+
+
+                    card.innerHTML = `
+
+                        <h3>
+                            🏥 ${request.hospital_name}
+                        </h3>
+
+
+                        <div class="blood-group">
+                            🩸 ${request.blood_group}
+                        </div>
+
+
+                        <p>
+                            <strong>Patient Name:</strong>
+                            ${request.patient_name}
+                        </p>
+
+
+                        <p>
+                            <strong>Age:</strong>
+                            ${request.age}
+                        </p>
+
+
+                        <p>
+                            <strong>Gender:</strong>
+                            ${request.gender}
+                        </p>
+
+
+                        <p>
+                            <strong>Blood Group:</strong>
+                            ${request.blood_group}
+                        </p>
+
+
+                        <p>
+                            <strong>Required Units:</strong>
+                            ${request.units}
+                        </p>
+
+
+                        <p>
+                            <strong>City:</strong>
+                            ${request.city}
+                        </p>
+
+
+                        <p>
+                            <strong>Phone:</strong>
+                            ${request.phone}
+                        </p>
+
+
+                        <p>
+                            <strong>Reason:</strong>
+                            ${request.reason}
+                        </p>
+
+
+                        <p>
+                            <strong>Status:</strong>
+
+                            <span class="approved-status">
+                                Approved
+                            </span>
+
+                        </p>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "APPROVED HOSPITAL ERROR:",
+                    error
+                );
+
+
+                container.innerHTML = `
+
+                    <div class="error-message">
+
+                        ❌ Failed to load approved hospitals
+
+                        <br><br>
+
+                        <small>
+                            ${error.message}
+                        </small>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // BACK TO ADMIN
+        // ==========================================
+
+        function goBack() {
+
+            window.location.href =
+                "admin.html";
+
+        }
+
+
+        // ==========================================
+        // LOAD WHEN PAGE OPENS
+        // ==========================================
+
+        loadApprovedHospitals();
+
+    </script>
+
+</body>
+
+</html>

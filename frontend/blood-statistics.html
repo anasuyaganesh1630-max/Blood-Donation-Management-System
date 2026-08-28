@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Blood Group Statistics</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+}
+
+header {
+    background: linear-gradient(135deg, #b71c1c, #e53935);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+}
+
+.back-btn {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.back-btn:hover {
+    background: #111;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background: #d32f2f;
+    color: white;
+    padding: 15px;
+}
+
+td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background: #f9f9f9;
+}
+
+.count {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🩸 Blood Group Statistics</h1>
+
+<p>Donor distribution by blood group and city</p>
+
+</header>
+
+
+<div class="container">
+
+<button
+    class="back-btn"
+    onclick="goBack()">
+
+    ← Back to Admin
+
+</button>
+
+
+<div class="card">
+
+<h2>🩸 Blood Group Statistics</h2>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Blood Group</th>
+<th>Total Donors</th>
+</tr>
+
+</thead>
+
+<tbody id="bloodStats">
+
+<tr>
+<td colspan="2">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>📍 City Statistics</h2>
+
+<table>
+
+<thead>
+
+<tr>
+<th>City</th>
+<th>Total Donors</th>
+</tr>
+
+</thead>
+
+<tbody id="cityStats">
+
+<tr>
+<td colspan="2">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+function goBack() {
+
+    window.location.href = "admin.html";
+
+}
+
+
+// =====================================
+// BLOOD GROUP STATISTICS
+// =====================================
+
+async function loadBloodStats() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/donors/stats"
+        );
+
+        const data = await response.json();
+
+        const table =
+            document.getElementById("bloodStats");
+
+        table.innerHTML = "";
+
+        if (data.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="2">
+                        No donor data available
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        data.forEach(item => {
+
+            table.innerHTML += `
+                <tr>
+
+                    <td>
+                        🩸 ${item.blood_group}
+                    </td>
+
+                    <td class="count">
+                        ${item.total}
+                    </td>
+
+                </tr>
+            `;
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("bloodStats").innerHTML = `
+            <tr>
+                <td colspan="2">
+                    ❌ Cannot connect to server
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+// =====================================
+// CITY STATISTICS
+// =====================================
+
+async function loadCityStats() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/donors/citystats"
+        );
+
+        const data = await response.json();
+
+        const table =
+            document.getElementById("cityStats");
+
+        table.innerHTML = "";
+
+        if (data.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="2">
+                        No city data available
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        data.forEach(item => {
+
+            table.innerHTML += `
+                <tr>
+
+                    <td>
+                        📍 ${item.city}
+                    </td>
+
+                    <td class="count">
+                        ${item.total}
+                    </td>
+
+                </tr>
+            `;
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("cityStats").innerHTML = `
+            <tr>
+                <td colspan="2">
+                    ❌ Cannot connect to server
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+loadBloodStats();
+loadCityStats();
+
+</script>
+
+</body>
+
+</html>

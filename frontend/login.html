@@ -83,7 +83,7 @@ function login(){
         setTimeout(() => {
 
             window.location.href =
-            "hospital.html";
+            "admin.html";
 
         }, 2500);
 
@@ -117,6 +117,75 @@ function typeText(){
 
 typeText();
 </script>
+<script>
 
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+
+        const response = await fetch("http://localhost:5000/api/login/login", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+
+        });
+
+        const data = await response.json();
+        if (data.user.role === "hospital") {
+
+    localStorage.setItem(
+        "hospitalName",
+        data.user.name
+    );
+
+    window.location.href = "hospitals.html";
+}
+
+        if (!response.ok) {
+            alert(data.message);
+            return;
+        }
+
+        // Save logged-in user
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Redirect according to role
+        if (data.user.role === "admin") {
+
+            window.location.href = "admin.html";
+
+        } else if (data.user.role === "donor") {
+
+            window.location.href = "donor.html";
+
+        } else if (data.user.role === "hospital") {
+
+            window.location.href = "hospital.html";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Cannot connect to server");
+
+    }
+
+});
+
+</script>
 </body>
 </html>
