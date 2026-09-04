@@ -1,113 +1,263 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
+
 <head>
-    <title>Blood Compatibility Checker</title>
-    <link rel="stylesheet" href="hospital.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Blood Compatibility Checker</title>
+
+<link rel="stylesheet" href="hospital.css">
+
+<style>
+
+    .compatibility-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .compatibility-container h1 {
+        color: #b71c1c;
+        margin-bottom: 25px;
+    }
+
+    .compatibility-container select {
+        width: 100%;
+        padding: 13px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .check-btn {
+        margin-top: 20px;
+        background: #7c3aed;
+        padding: 13px 25px;
+    }
+
+    .check-btn:hover {
+        background: #6d28d9;
+    }
+
+    .result-card {
+        margin-top: 25px;
+        padding: 25px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 6px solid #b71c1c;
+        text-align: left;
+    }
+
+    .result-card h2 {
+        color: #b71c1c;
+        margin-top: 0;
+    }
+
+    .blood-list {
+        margin-top: 8px;
+        padding: 12px;
+        background: #fee2e2;
+        border-radius: 8px;
+        font-weight: bold;
+        color: #991b1b;
+    }
+
+    .back-btn {
+        margin-top: 20px;
+        background: #333;
+    }
+
+    .error-message {
+        margin-top: 20px;
+        color: #b91c1c;
+        font-weight: bold;
+    }
+
+</style>
 </head>
+
 <body>
 
-<div class="container">
+<div class="compatibility-container">
+<h1>🩸 Blood Compatibility Checker</h1>
 
-    <h1>🩸 Blood Compatibility Checker</h1>
+<p>
+    Select a blood group to see compatible donors and recipients.
+</p>
 
-    <select id="bloodGroup">
-        <option value="">Select Blood Group</option>
-        <option>A+</option>
-        <option>A-</option>
-        <option>B+</option>
-        <option>B-</option>
-        <option>AB+</option>
-        <option>AB-</option>
-        <option>O+</option>
-        <option>O-</option>
-    </select>
+<select id="bloodGroup">
 
-    <br><br>
+    <option value="">
+        Select Blood Group
+    </option>
 
-    <button onclick="checkCompatibility()">
-        Check Compatibility
-    </button>
+    <option value="A+">A+</option>
+    <option value="A-">A-</option>
 
-    <div id="result"></div>
+    <option value="B+">B+</option>
+    <option value="B-">B-</option>
+
+    <option value="AB+">AB+</option>
+    <option value="AB-">AB-</option>
+
+    <option value="O+">O+</option>
+    <option value="O-">O-</option>
+
+</select>
+
+<button
+    class="check-btn"
+    onclick="checkCompatibility()">
+
+    🩸 Check Compatibility
+
+</button>
+
+<div id="result"></div>
+
+<button
+    class="back-btn"
+    onclick="history.back()">
+
+    ← Back
+
+</button>
 
 </div>
 
 <script>
 
-function checkCompatibility(){
+function checkCompatibility() {
 
     const group =
-    document.getElementById("bloodGroup").value;
+        document.getElementById("bloodGroup").value;
+
+    const result =
+        document.getElementById("result");
+
+
+    if (!group) {
+
+        result.innerHTML = `
+            <div class="error-message">
+                ⚠️ Please select a blood group first.
+            </div>
+        `;
+
+        return;
+    }
+
 
     const compatibility = {
 
-        "A+" : {
-            donors:["A+","A-","O+","O-"],
-            recipients:["A+","AB+"]
+        "A+": {
+            donors: ["A+", "A-", "O+", "O-"],
+            recipients: ["A+", "AB+"]
         },
 
-        "A-" : {
-            donors:["A-","O-"],
-            recipients:["A+","A-","AB+","AB-"]
+        "A-": {
+            donors: ["A-", "O-"],
+            recipients: ["A-", "A+", "AB-", "AB+"]
         },
 
-        "B+" : {
-            donors:["B+","B-","O+","O-"],
-            recipients:["B+","AB+"]
+        "B+": {
+            donors: ["B+", "B-", "O+", "O-"],
+            recipients: ["B+", "AB+"]
         },
 
-        "B-" : {
-            donors:["B-","O-"],
-            recipients:["B+","B-","AB+","AB-"]
+        "B-": {
+            donors: ["B-", "O-"],
+            recipients: ["B-", "B+", "AB-", "AB+"]
         },
 
-        "AB+" : {
-            donors:["All Blood Groups"],
-            recipients:["AB+"]
+        "AB+": {
+            donors: [
+                "A+",
+                "A-",
+                "B+",
+                "B-",
+                "AB+",
+                "AB-",
+                "O+",
+                "O-"
+            ],
+            recipients: ["AB+"]
         },
 
-        "AB-" : {
-            donors:["AB-","A-","B-","O-"],
-            recipients:["AB+","AB-"]
+        "AB-": {
+            donors: ["AB-", "A-", "B-", "O-"],
+            recipients: ["AB-", "AB+"]
         },
 
-        "O+" : {
-            donors:["O+","O-"],
-            recipients:["O+","A+","B+","AB+"]
+        "O+": {
+            donors: ["O+", "O-"],
+            recipients: ["O+", "A+", "B+", "AB+"]
         },
 
-        "O-" : {
-            donors:["O-"],
-            recipients:["All Blood Groups"]
+        "O-": {
+            donors: ["O-"],
+            recipients: [
+                "O-",
+                "O+",
+                "A-",
+                "A+",
+                "B-",
+                "B+",
+                "AB-",
+                "AB+"
+            ]
         }
 
     };
 
-    const data = compatibility[group];
 
-    document.getElementById("result").innerHTML = `
+    const data =
+        compatibility[group];
 
-    <div class="history-card">
 
-        <h2>Blood Group: ${group}</h2>
+    result.innerHTML = `
 
-        <p>
-        <strong>Can Receive From:</strong><br>
-        ${data.donors.join(", ")}
-        </p>
+        <div class="result-card">
 
-        <br>
+            <h2>
+                🩸 Blood Group: ${group}
+            </h2>
 
-        <p>
-        <strong>Can Donate To:</strong><br>
-        ${data.recipients.join(", ")}
-        </p>
+            <p>
+                <strong>
+                    Can Receive Blood From:
+                </strong>
+            </p>
 
-    </div>
+            <div class="blood-list">
+                ${data.donors.join(", ")}
+            </div>
+
+
+            <p>
+                <strong>
+                    Can Donate Blood To:
+                </strong>
+            </p>
+
+            <div class="blood-list">
+                ${data.recipients.join(", ")}
+            </div>
+
+        </div>
+
     `;
+
 }
 
 </script>
 
 </body>
+
 </html>

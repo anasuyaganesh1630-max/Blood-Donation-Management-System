@@ -1,238 +1,243 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+```
+<title>Admin - Registration Requests</title>
 
-    <title>Registration Requests</title>
+<style>
 
-    <style>
+    * {
+        box-sizing: border-box;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        color: #333;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            color: #333;
-        }
+    header {
+        background: linear-gradient(135deg, #b71c1c, #e53935);
+        color: white;
+        padding: 30px 50px;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 34px;
+    }
+
+    header p {
+        margin: 8px 0 0;
+        font-size: 17px;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1400px;
+        margin: 30px auto;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        border: none;
+        padding: 13px 22px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .back {
+        background: #333;
+    }
+
+    .refresh {
+        background: #1976d2;
+    }
+
+    .registrations {
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fit, minmax(330px, 1fr));
+        gap: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+
+        box-shadow:
+            0 5px 20px rgba(0, 0, 0, 0.08);
+
+        border-left: 6px solid #d32f2f;
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #b71c1c;
+    }
+
+    .role {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #e3f2fd;
+        color: #1565c0;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #fff3cd;
+        color: #856404;
+        font-weight: bold;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .approve,
+    .reject {
+        flex: 1;
+        border: none;
+        padding: 13px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .approve {
+        background: #16a34a;
+    }
+
+    .approve:hover {
+        background: #15803d;
+    }
+
+    .reject {
+        background: #dc2626;
+    }
+
+    .reject:hover {
+        background: #b91c1c;
+    }
+
+    .empty {
+        background: white;
+        padding: 60px;
+        text-align: center;
+        border-radius: 15px;
+        grid-column: 1 / -1;
+    }
+
+    .error {
+        color: #b91c1c;
+    }
+
+    @media(max-width: 700px) {
 
         header {
-            background: linear-gradient(
-                135deg,
-                #b71c1c,
-                #e53935
-            );
-
-            color: white;
-            padding: 30px 50px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 36px;
-        }
-
-        header p {
-            font-size: 18px;
-            margin-bottom: 0;
+            padding: 25px;
         }
 
         .container {
-            width: 92%;
-            max-width: 1400px;
-            margin: 25px auto;
+            width: 94%;
         }
 
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .back-btn,
-        .refresh-btn {
-            border: none;
-            padding: 14px 25px;
-            border-radius: 9px;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    }
 
-        .back-btn {
-            background: #333;
-        }
-
-        .refresh-btn {
-            background: #d32f2f;
-        }
-
-        .requests {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(320px, 1fr));
-
-            gap: 25px;
-        }
-
-        .request-card {
-            background: white;
-            padding: 28px;
-            border-radius: 16px;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.08);
-
-            border-left: 6px solid #d32f2f;
-        }
-
-        .request-card h2 {
-            margin-top: 0;
-            color: #b71c1c;
-            font-size: 25px;
-        }
-
-        .icon {
-            font-size: 35px;
-        }
-
-        .type {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background: #ffe5e5;
-            color: #b71c1c;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 7px 13px;
-            border-radius: 20px;
-            background: #fff3cd;
-            color: #856404;
-            font-weight: bold;
-        }
-
-        .request-card p {
-            margin: 12px 0;
-            font-size: 16px;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .approve,
-        .reject {
-            flex: 1;
-            border: none;
-            padding: 13px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .approve {
-            background: #16a34a;
-        }
-
-        .approve:hover {
-            background: #15803d;
-        }
-
-        .reject {
-            background: #dc2626;
-        }
-
-        .reject:hover {
-            background: #b91c1c;
-        }
-
-        .empty {
-            background: white;
-            padding: 60px;
-            text-align: center;
-            border-radius: 15px;
-            color: #777;
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
-
 <body>
-
 
 <header>
 
-    <h1>🩸 Registration Requests</h1>
+```
+<h1>👤 Admin Registration Requests</h1>
 
-    <p>
-        Review and approve donor and hospital registrations
-    </p>
+<p>
+    Review and approve donor and hospital registrations
+</p>
+```
 
 </header>
 
-
 <div class="container">
 
+```
+<div class="top-bar">
 
-    <div class="top-bar">
+    <button
+        class="btn back"
+        onclick="goBack()">
 
-        <button
-            class="back-btn"
-            onclick="goBack()">
+        ← Admin Home
 
-            ← Back to Admin Dashboard
+    </button>
 
-        </button>
+    <button
+        class="btn refresh"
+        onclick="loadRegistrations()">
 
+        🔄 Refresh
 
-        <button
-            class="refresh-btn"
-            onclick="loadRegistrations()">
-
-            🔄 Refresh
-
-        </button>
-
-    </div>
-
-
-    <h2>
-        Pending Registrations
-    </h2>
-
-
-    <div id="requestsContainer"
-         class="requests">
-
-        <div class="empty">
-            Loading registrations...
-        </div>
-
-    </div>
-
+    </button>
 
 </div>
 
 
+<h2>Pending Registrations</h2>
+
+
+<div
+    id="registrationsContainer"
+    class="registrations">
+
+    <div class="empty">
+        Loading registrations...
+    </div>
+
+</div>
+```
+
+</div>
+
 <script>
+
+const API_URL =
+    "http://localhost:5000/api/registrations";
 
 
 // ==========================================
@@ -246,7 +251,6 @@ function goBack() {
 }
 
 
-
 // ==========================================
 // LOAD PENDING REGISTRATIONS
 // ==========================================
@@ -255,169 +259,56 @@ async function loadRegistrations() {
 
     const container =
         document.getElementById(
-            "requestsContainer"
+            "registrationsContainer"
         );
 
-
     container.innerHTML = `
-
         <div class="empty">
-
             Loading registrations...
-
         </div>
-
     `;
-
 
     try {
 
- const response = await fetch(
-    "http://localhost:5000/api/registration/pending"
-);
+        const response =
+            await fetch(
+                `${API_URL}/pending`
+            );
 
-const text = await response.text();
-
-console.log("HTTP STATUS:", response.status);
-console.log("SERVER RESPONSE:", text);
-
-if (!response.ok) {
-    throw new Error(
-        `Server returned ${response.status}: ${text}`
-    );
-}
-
-const registrations = JSON.parse(text);
-
+        const text =
+            await response.text();
 
         console.log(
             "Pending registrations:",
-            registrations
+            text
         );
-
 
         if (!response.ok) {
 
             throw new Error(
-                registrations.message ||
-                "Failed to load registrations"
+                `Server error: ${response.status}`
             );
 
         }
 
+        let registrations;
 
-        if (
-            !registrations ||
-            registrations.length === 0
-        ) {
+        try {
 
-            container.innerHTML = `
+            registrations =
+                JSON.parse(text);
 
-                <div class="empty">
+        } catch {
 
-                    <h2>
-                        🎉 No Pending Registrations
-                    </h2>
-
-                    <p>
-                        There are currently no
-                        pending donor or hospital registrations.
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
+            throw new Error(
+                "Backend returned invalid JSON"
+            );
 
         }
 
-
-        container.innerHTML = "";
-
-
-        registrations.forEach(registration => {
-
-
-            const card =
-                document.createElement("div");
-
-
-            card.className =
-                "request-card";
-
-
-            // ------------------------------
-            // CHECK REGISTRATION TYPE
-            // ------------------------------
-
-            const isHospital =
-                registration.role === "hospital";
-
-
-            const icon =
-                isHospital ? "🏥" : "🩸";
-
-
-            const type =
-                isHospital ? "Hospital" : "Donor";
-
-
-            // ------------------------------
-            // CREATE CARD
-            // ------------------------------
-
-            card.innerHTML = `
-
-                <div class="icon">
-                    ${icon}
-                </div>
-
-                <h2>
-                    ${registration.name}
-                </h2>
-
-                <div class="type">
-                    ${type}
-                </div>
-
-                <p>
-                    <strong>Email:</strong>
-                    ${registration.email}
-                </p>
-
-                <p>
-                    <strong>Type:</strong>
-                    ${type}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-
-                    <span class="status">
-                        ${registration.status || "Pending"}
-                    </span>
-
-                </p>
-<button
-    class="approve"
-    onclick="approveRegistration(${registration.id})">
-    ✓ Approve
-</button>
-
-<button
-    class="reject"
-    onclick="rejectRegistration(${registration.id})">
-    ✕ Reject
-</button>
-
-            `;
-
-
-            container.appendChild(card);
-
-        });
-
+        displayRegistrations(
+            registrations
+        );
 
     } catch (error) {
 
@@ -426,21 +317,20 @@ const registrations = JSON.parse(text);
             error
         );
 
-
         container.innerHTML = `
 
-            <div class="empty">
+            <div class="empty error">
 
                 <h2>
-                    ❌ Unable to Load Registrations
+                    ❌ Failed to load registrations
                 </h2>
 
                 <p>
-                    ${error.message}
+                    ${escapeHtml(error.message)}
                 </p>
 
                 <p>
-                    Make sure the backend is running
+                    Make sure Java is running
                     on port 5000.
                 </p>
 
@@ -453,124 +343,320 @@ const registrations = JSON.parse(text);
 }
 
 
+// ==========================================
+// DISPLAY REGISTRATIONS
+// ==========================================
 
-async function updateRequestStatus(requestId, status) {
+function displayRegistrations(registrations) {
+
+    const container =
+        document.getElementById(
+            "registrationsContainer"
+        );
+
+
+    if (!registrations ||
+        registrations.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h2>
+                    ✅ No Pending Registrations
+                </h2>
+
+                <p>
+                    There are currently no donor
+                    or hospital registrations
+                    waiting for approval.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    registrations.forEach(user => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "card";
+
+
+        const role =
+            user.role || "Unknown";
+
+
+        card.innerHTML = `
+
+            <h2>
+                ${role.toLowerCase() === "donor"
+                    ? "🩸"
+                    : "🏥"}
+                ${escapeHtml(
+                    user.name || "No name"
+                )}
+            </h2>
+
+
+            <span class="role">
+                ${escapeHtml(role)}
+            </span>
+
+
+            <p>
+                <strong>ID:</strong>
+                ${user.id ?? "N/A"}
+            </p>
+
+
+            <p>
+                <strong>Email:</strong>
+                ${escapeHtml(
+                    user.email || "N/A"
+                )}
+            </p>
+
+
+            <p>
+                <strong>Registration Date:</strong>
+                ${escapeHtml(
+                    user.createdAt || "N/A"
+                )}
+            </p>
+
+
+            <p>
+                <strong>Status:</strong>
+
+                <span class="status">
+                    ${escapeHtml(
+                        user.status || "Pending"
+                    )}
+                </span>
+
+            </p>
+
+
+            <div class="buttons">
+
+                <button
+                    class="approve"
+                    onclick="approveRegistration(${user.id})">
+
+                    ✓ Approve
+
+                </button>
+
+
+                <button
+                    class="reject"
+                    onclick="rejectRegistration(${user.id})">
+
+                    ✕ Reject
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+// ==========================================
+// APPROVE
+// ==========================================
+
+async function approveRegistration(id) {
+
+    if (!confirm(
+        "Approve this registration?"
+    )) {
+        return;
+    }
+
 
     try {
 
-        console.log("Updating:", requestId, status);
+        const response =
+            await fetch(
+                `${API_URL}/approve/${id}`,
+                {
+                    method: "PUT"
+                }
+            );
 
-        const response = await fetch(
-            `http://localhost:5000/api/registrations/${requestId}/status`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    status: status
-                })
-            }
+
+        const text =
+            await response.text();
+
+
+        console.log(
+            "Approve response:",
+            text
         );
 
-        // First read as TEXT
-        const text = await response.text();
 
-        console.log("Server response:", text);
-
-        if (!response.ok) {
-            throw new Error(
-                `Server error ${response.status}: ${text}`
-            );
-        }
-
-        // Convert to JSON only after checking response
-        let result;
+        let result = {};
 
         try {
             result = JSON.parse(text);
-        } catch (e) {
-            throw new Error(
-                "Backend did not return JSON. Response was: " + text
-            );
+        } catch {
+            result = {};
         }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                `Approval failed: ${response.status}`
+            );
+
+        }
+
 
         alert(
-            status === "approved"
-                ? "Registration approved successfully!"
-                : "Registration rejected successfully!"
+            "✅ Registration approved successfully!"
         );
+
 
         loadRegistrations();
 
     } catch (error) {
 
-        console.error("Status update error:", error);
-
-        alert("❌ " + error.message);
-    }
-}
-async function approveRegistration(id) {
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:5000/api/registration/approve/${id}`,
-            {
-                method: "PUT"
-            }
+        console.error(
+            "Approval error:",
+            error
         );
 
-        const data = await response.json();
+        alert(
+            "❌ " + error.message
+        );
 
-        if (!response.ok) {
-            throw new Error(data.message || "Approval failed");
-        }
-
-        alert(data.message);
-
-        loadRegistrations();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(error.message);
     }
+
 }
+
+
+// ==========================================
+// REJECT
+// ==========================================
+
 async function rejectRegistration(id) {
 
+    if (!confirm(
+        "Reject this registration?"
+    )) {
+        return;
+    }
+
+
     try {
 
-        const response = await fetch(
-            `http://localhost:5000/api/registration/reject/${id}`,
-            {
-                method: "PUT"
-            }
+        const response =
+            await fetch(
+                `${API_URL}/reject/${id}`,
+                {
+                    method: "PUT"
+                }
+            );
+
+
+        const text =
+            await response.text();
+
+
+        console.log(
+            "Reject response:",
+            text
         );
 
-        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.message || "Rejection failed");
+        let result = {};
+
+        try {
+            result = JSON.parse(text);
+        } catch {
+            result = {};
         }
 
-        alert(data.message);
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                `Rejection failed: ${response.status}`
+            );
+
+        }
+
+
+        alert(
+            "❌ Registration rejected."
+        );
+
 
         loadRegistrations();
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Reject error:",
+            error
+        );
 
-        alert(error.message);
+        alert(
+            "❌ " + error.message
+        );
+
     }
-}
-loadRegistrations();
 
+}
+
+
+// ==========================================
+// HTML SECURITY
+// ==========================================
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+// ==========================================
+// LOAD PAGE
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadRegistrations
+);
 
 </script>
-
 
 </body>
 

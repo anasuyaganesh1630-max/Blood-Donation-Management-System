@@ -1,3 +1,24 @@
-node_modules/
+# Java / Maven
+**/target/
+*.class
+
+# Node.js
+**/node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Environment / secrets
 .env
-*.log
+application-local.properties
+
+# OS
+Thumbs.db
+.DS_Store

@@ -3,167 +3,335 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <title>Admin Notifications</title>
 
-<title>Admin Notifications</title>
+    <style>
 
-<style>
+        * {
+            box-sizing: border-box;
+        }
 
-* {
-    box-sizing: border-box;
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
 
-body {
+        /* ============================= */
+        /* HEADER */
+        /* ============================= */
 
-    margin: 0;
+        header {
+            background: linear-gradient(
+                135deg,
+                #b71c1c,
+                #e53935
+            );
 
-    font-family: Arial, sans-serif;
+            color: white;
+            padding: 30px 50px;
 
-    background: #f4f6f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-}
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
 
-header {
+        header p {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
 
-    background:
-        linear-gradient(
-            135deg,
-            #b71c1c,
-            #e53935
-        );
+        /* ============================= */
+        /* CONTAINER */
+        /* ============================= */
 
-    color: white;
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
 
-    padding: 30px;
+        /* ============================= */
+        /* TOP BAR */
+        /* ============================= */
 
-    text-align: center;
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-}
+            margin-bottom: 25px;
+        }
 
-header h1 {
+        button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 8px;
 
-    margin: 0;
+            color: white;
 
-}
+            cursor: pointer;
 
-.container {
+            font-size: 15px;
+            font-weight: bold;
 
-    width: 90%;
+            transition: 0.2s;
+        }
 
-    max-width: 1000px;
+        button:hover {
+            transform: translateY(-2px);
+        }
 
-    margin: 30px auto;
+        .back-btn {
+            background: #333;
+        }
 
-}
+        .refresh-btn {
+            background: #1976d2;
+        }
 
-.back-btn {
+        .clear-btn {
+            background: #777;
+        }
 
-    background: #333;
+        /* ============================= */
+        /* NOTIFICATION SUMMARY */
+        /* ============================= */
 
-    color: white;
+        .summary {
+            display: grid;
 
-    border: none;
+            grid-template-columns:
+                repeat(3, 1fr);
 
-    padding: 12px 20px;
+            gap: 20px;
 
-    border-radius: 8px;
+            margin-bottom: 30px;
+        }
 
-    cursor: pointer;
+        .summary-card {
+            background: white;
 
-    margin-bottom: 25px;
+            padding: 22px;
 
-}
+            border-radius: 15px;
 
-.back-btn:hover {
+            text-align: center;
 
-    background: #111;
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+        }
 
-}
+        .summary-card h3 {
+            margin-top: 0;
+            color: #555;
+        }
 
-.notification {
+        .summary-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #c62828;
+        }
 
-    background: white;
+        /* ============================= */
+        /* NOTIFICATIONS */
+        /* ============================= */
 
-    padding: 20px;
+        .notifications {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
 
-    margin-bottom: 15px;
+        .notification {
+            background: white;
 
-    border-radius: 12px;
+            padding: 22px;
 
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.08);
+            border-radius: 14px;
 
-    border-left: 5px solid #e53935;
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
 
-}
+            display: flex;
 
-.notification h3 {
+            align-items: flex-start;
 
-    margin-top: 0;
+            gap: 18px;
 
-    color: #b71c1c;
+            border-left: 6px solid #d32f2f;
+        }
 
-}
+        .notification.donor {
+            border-left-color: #1976d2;
+        }
 
-.notification p {
+        .notification.blood {
+            border-left-color: #d32f2f;
+        }
 
-    margin-bottom: 0;
+        .notification-icon {
+            font-size: 38px;
 
-}
+            width: 55px;
 
-.critical {
+            text-align: center;
+        }
 
-    border-left-color: #7f0000;
+        .notification-content {
+            flex: 1;
+        }
 
-}
+        .notification-content h2 {
+            margin: 0 0 8px;
 
-.urgent {
+            color: #b71c1c;
 
-    border-left-color: #f57c00;
+            font-size: 20px;
+        }
 
-}
+        .notification-content p {
+            margin: 7px 0;
 
-.registration {
+            line-height: 1.5;
+        }
 
-    border-left-color: #16a34a;
+        .notification-time {
+            color: #777;
 
-}
+            font-size: 13px;
 
-.empty {
+            margin-top: 10px;
+        }
 
-    background: white;
+        .notification-type {
+            display: inline-block;
 
-    padding: 40px;
+            padding: 6px 12px;
 
-    text-align: center;
+            border-radius: 20px;
 
-    border-radius: 12px;
+            font-size: 13px;
 
-}
+            font-weight: bold;
 
-.refresh {
+            margin-bottom: 8px;
+        }
 
-    background: #d32f2f;
+        .donor-type {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
 
-    color: white;
+        .blood-type {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
 
-    border: none;
+        .view-btn {
+            background: #d32f2f;
 
-    padding: 12px 20px;
+            padding: 9px 15px;
 
-    border-radius: 8px;
+            margin-top: 10px;
 
-    cursor: pointer;
+            font-size: 14px;
+        }
 
-    float: right;
+        .view-btn:hover {
+            background: #b71c1c;
+        }
 
-}
+        /* ============================= */
+        /* EMPTY */
+        /* ============================= */
 
-</style>
+        .empty {
+            background: white;
+
+            padding: 60px 20px;
+
+            text-align: center;
+
+            border-radius: 15px;
+
+            color: #777;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+        }
+
+        .empty h2 {
+            color: #555;
+        }
+
+        /* ============================= */
+        /* ERROR */
+        /* ============================= */
+
+        .error {
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            padding: 25px;
+
+            border-radius: 12px;
+        }
+
+        /* ============================= */
+        /* MOBILE */
+        /* ============================= */
+
+        @media(max-width:700px) {
+
+            header {
+                padding: 25px;
+
+                flex-direction: column;
+
+                text-align: center;
+
+                gap: 10px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .top-bar {
+                flex-direction: column;
+
+                gap: 10px;
+
+                align-items: stretch;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .notification {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -171,50 +339,165 @@ header h1 {
 <body>
 
 
+<!-- ========================================= -->
+<!-- HEADER -->
+<!-- ========================================= -->
+
 <header>
 
-<h1>🔔 Admin Notifications</h1>
+    <div>
 
-<p>
-System notifications and important activities
-</p>
+        <h1>
+            🔔 Admin Notifications
+        </h1>
+
+        <p>
+            Donor approvals and blood request updates
+        </p>
+
+    </div>
+
+    <div>
+
+        🛡️ Administrator
+
+    </div>
 
 </header>
 
 
+<!-- ========================================= -->
+<!-- MAIN -->
+<!-- ========================================= -->
+
 <div class="container">
 
 
-<button
-    class="back-btn"
-    onclick="goBack()">
+    <!-- ========================================= -->
+    <!-- TOP BAR -->
+    <!-- ========================================= -->
 
-    ← Back to Admin
+    <div class="top-bar">
 
-</button>
+        <button
+            class="back-btn"
+            onclick="goBack()">
 
+            ← Admin Dashboard
 
-<button
-    class="refresh"
-    onclick="loadNotifications()">
-
-    🔄 Refresh
-
-</button>
+        </button>
 
 
-<div style="clear:both;"></div>
+        <div>
 
-<br>
+            <button
+                class="refresh-btn"
+                onclick="loadNotifications()">
 
+                🔄 Refresh
 
-<div id="notifications">
+            </button>
 
-    <div class="empty">
-        Loading notifications...
+            <button
+                class="clear-btn"
+                onclick="clearNotifications()">
+
+                🗑 Clear
+
+            </button>
+
+        </div>
+
     </div>
 
-</div>
+
+    <!-- ========================================= -->
+    <!-- SUMMARY -->
+    <!-- ========================================= -->
+
+    <div class="summary">
+
+
+        <div class="summary-card">
+
+            <h3>
+                🔔 Total Notifications
+            </h3>
+
+            <div
+                id="totalCount"
+                class="summary-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                🩸 Donor Notifications
+            </h3>
+
+            <div
+                id="donorNotificationCount"
+                class="summary-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <h3>
+                🏥 Blood Request Notifications
+            </h3>
+
+            <div
+                id="bloodRequestNotificationCount"
+                class="summary-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- TITLE -->
+    <!-- ========================================= -->
+
+    <h2>
+        🔔 Recent Notifications
+    </h2>
+
+
+    <!-- ========================================= -->
+    <!-- NOTIFICATIONS -->
+    <!-- ========================================= -->
+
+    <div
+        id="notificationsContainer"
+        class="notifications">
+
+        <div class="empty">
+
+            <h2>
+                Loading notifications...
+            </h2>
+
+        </div>
+
+    </div>
 
 
 </div>
@@ -224,7 +507,18 @@ System notifications and important activities
 
 
 // =====================================================
-// BACK TO ADMIN
+// API URLS
+// =====================================================
+
+const DONOR_API =
+    "http://localhost:5000/api/donors/approved";
+
+const BLOOD_REQUEST_API =
+    "http://localhost:5000/api/blood-requests/approved";
+
+
+// =====================================================
+// BACK TO ADMIN DASHBOARD
 // =====================================================
 
 function goBack() {
@@ -243,157 +537,294 @@ async function loadNotifications() {
 
     const container =
         document.getElementById(
-            "notifications"
+            "notificationsContainer"
         );
-
 
     container.innerHTML = `
 
         <div class="empty">
-            Loading notifications...
+
+            <h2>
+                🔄 Loading notifications...
+            </h2>
+
         </div>
 
     `;
 
 
-    let notifications = [];
-
-
-    // =================================================
-    // PENDING REGISTRATIONS
-    // =================================================
-
     try {
 
-        const response = await fetch(
-            "http://localhost:5000/api/registration/pending"
-        );
+        // =============================================
+        // GET APPROVED DONORS
+        // =============================================
 
+        let donors = [];
 
-        const registrations =
-            await response.json();
+        try {
 
+            const donorResponse =
+                await fetch(DONOR_API);
 
-        registrations.forEach(user => {
+            if (donorResponse.ok) {
 
-            if (user.role === "donor") {
-
-                notifications.push({
-
-                    type: "registration",
-
-                    title:
-                        "🩸 New Donor Registration",
-
-                    message:
-                        `${user.name} has registered as a donor and is waiting for admin approval.`
-
-                });
+                donors =
+                    await donorResponse.json();
 
             }
 
+        } catch (error) {
 
-            if (user.role === "hospital") {
+            console.error(
+                "Donor notification error:",
+                error
+            );
 
-                notifications.push({
+        }
 
-                    type: "registration",
 
-                    title:
-                        "🏥 New Hospital Registration",
+        // =============================================
+        // GET APPROVED BLOOD REQUESTS
+        // =============================================
 
-                    message:
-                        `${user.name} has registered as a hospital and is waiting for admin approval.`
+        let bloodRequests = [];
 
-                });
+        try {
+
+            const requestResponse =
+                await fetch(BLOOD_REQUEST_API);
+
+            if (requestResponse.ok) {
+
+                bloodRequests =
+                    await requestResponse.json();
 
             }
+
+        } catch (error) {
+
+            console.error(
+                "Blood request notification error:",
+                error
+            );
+
+        }
+
+
+        // =============================================
+        // CREATE NOTIFICATION ARRAY
+        // =============================================
+
+        const notifications = [];
+
+
+        // =============================================
+        // DONOR NOTIFICATIONS
+        // =============================================
+
+        donors.forEach(donor => {
+
+            notifications.push({
+
+                type: "donor",
+
+                title:
+                    "Donor Approved",
+
+                message:
+                    `${donor.name || donor.fullName || "A donor"} has been approved by the administrator.`,
+
+                details: {
+
+                    name:
+                        donor.name ||
+                        donor.fullName ||
+                        "Not provided",
+
+                    email:
+                        donor.email ||
+                        "Not provided",
+
+                    bloodGroup:
+                        donor.bloodGroup ||
+                        donor.blood_group ||
+                        "Not provided",
+
+                    id:
+                        donor.id ||
+                        donor.donorId ||
+                        "N/A"
+
+                },
+
+                date:
+                    donor.approvedAt ||
+                    donor.createdAt ||
+                    null
+
+            });
 
         });
+
+
+        // =============================================
+        // BLOOD REQUEST NOTIFICATIONS
+        // =============================================
+
+        bloodRequests.forEach(request => {
+
+            notifications.push({
+
+                type: "blood",
+
+                title:
+                    "Blood Request Approved",
+
+                message:
+                    `A blood request from ${request.hospitalName || request.hospital || "a hospital"} has been approved.`,
+
+                details: {
+
+                    requestId:
+                        request.id ||
+                        request.requestId ||
+                        "N/A",
+
+                    hospital:
+                        request.hospitalName ||
+                        request.hospital ||
+                        "Not provided",
+
+                    patient:
+                        request.patientName ||
+                        request.name ||
+                        "Not provided",
+
+                    bloodGroup:
+                        request.bloodGroup ||
+                        request.blood_group ||
+                        "Not provided",
+
+                    units:
+                        request.unitsRequired ??
+                        request.units ??
+                        "Not provided",
+
+                    city:
+                        request.city ||
+                        "Not provided",
+
+                    reason:
+                        request.reason ||
+                        "Not provided"
+
+                },
+
+                date:
+                    request.approvedAt ||
+                    request.requestDate ||
+                    null
+
+            });
+
+        });
+
+
+        // =============================================
+        // UPDATE COUNTERS
+        // =============================================
+
+        document.getElementById(
+            "totalCount"
+        ).innerText =
+            notifications.length;
+
+
+        document.getElementById(
+            "donorNotificationCount"
+        ).innerText =
+            donors.length;
+
+
+        document.getElementById(
+            "bloodRequestNotificationCount"
+        ).innerText =
+            bloodRequests.length;
+
+
+        // =============================================
+        // DISPLAY
+        // =============================================
+
+        displayNotifications(
+            notifications
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Registration error:",
+            "Notification loading error:",
             error
         );
 
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                <h2>
+                    ❌ Failed to load notifications
+                </h2>
+
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+
+                <p>
+                    Make sure the Java Spring Boot
+                    backend is running on port 5000.
+                </p>
+
+            </div>
+
+        `;
+
     }
-
-
-    // =================================================
-    // BLOOD REQUESTS
-    // =================================================
-// =================================================
-// BLOOD REQUESTS
-// =================================================
-
-try {
-
-    const response = await fetch(
-        "http://localhost:5000/api/requests/all"
-    );
-
-    const requests = await response.json();
-
-    if (!response.ok) {
-        throw new Error("Failed to load blood requests");
-    }
-
-    requests.forEach(request => {
-
-        // Show notification for pending requests
-        if (
-            request.status &&
-            request.status.toLowerCase() === "pending"
-        ) {
-
-            notifications.push({
-
-                type: "critical",
-
-                title: "🩸 New Blood Request",
-
-                message:
-                    `${request.hospital_name || "Hospital"} requested ` +
-                    `${request.units || 0} unit(s) of ` +
-                    `${request.blood_group || "blood"} ` +
-                    `for patient ${request.patient_name || "N/A"}.`
-
-            });
-
-        }
-
-    });
-
-} catch (error) {
-
-    console.error(
-        "Blood request notification error:",
-        error
-    );
 
 }
 
 
-    // =================================================
-    // NO NOTIFICATIONS
-    // =================================================
+// =====================================================
+// DISPLAY NOTIFICATIONS
+// =====================================================
 
-    if (notifications.length === 0) {
+function displayNotifications(
+    notifications
+) {
+
+    const container =
+        document.getElementById(
+            "notificationsContainer"
+        );
+
+
+    if (
+        !notifications ||
+        notifications.length === 0
+    ) {
 
         container.innerHTML = `
 
             <div class="empty">
 
                 <h2>
-                    🎉 No New Notifications
+                    🔔 No Notifications
                 </h2>
 
                 <p>
-                    There are currently no pending
-                    registrations or urgent blood requests.
+                    No donor approvals or approved
+                    blood requests are available yet.
                 </p>
 
             </div>
@@ -405,49 +836,388 @@ try {
     }
 
 
-    // =================================================
-    // DISPLAY NOTIFICATIONS
-    // =================================================
-
     container.innerHTML = "";
 
 
-    notifications.forEach(notification => {
-
-        const div =
-            document.createElement("div");
+    // Newest first
+    notifications.reverse();
 
 
-        div.className =
-            `notification ${notification.type}`;
+    notifications.forEach(
+        notification => {
+
+            const card =
+                document.createElement("div");
 
 
-        div.innerHTML = `
-
-            <h3>
-                ${notification.title}
-            </h3>
-
-            <p>
-                ${notification.message}
-            </p>
-
-        `;
+            card.className =
+                `notification ${notification.type}`;
 
 
-        container.appendChild(div);
+            if (
+                notification.type === "donor"
+            ) {
 
-    });
+                card.innerHTML = `
+
+                    <div class="notification-icon">
+                        🩸
+                    </div>
+
+                    <div class="notification-content">
+
+                        <span class="notification-type donor-type">
+                            🩸 DONOR
+                        </span>
+
+                        <h2>
+                            ${escapeHtml(
+                                notification.title
+                            )}
+                        </h2>
+
+                        <p>
+                            ${escapeHtml(
+                                notification.message
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Donor Name:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.name
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Blood Group:
+                            </strong>
+
+                            🩸 ${escapeHtml(
+                                notification.details.bloodGroup
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Email:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.email
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Donor ID:
+                            </strong>
+
+                            #${escapeHtml(
+                                notification.details.id
+                            )}
+                        </p>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewDonors()">
+
+                            View Approved Donors
+
+                        </button>
+
+                        <div class="notification-time">
+
+                            ${formatDate(
+                                notification.date
+                            )}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            else if (
+                notification.type === "blood"
+            ) {
+
+                card.innerHTML = `
+
+                    <div class="notification-icon">
+                        🏥
+                    </div>
+
+                    <div class="notification-content">
+
+                        <span class="notification-type blood-type">
+                            🏥 BLOOD REQUEST
+                        </span>
+
+                        <h2>
+                            ${escapeHtml(
+                                notification.title
+                            )}
+                        </h2>
+
+                        <p>
+                            ${escapeHtml(
+                                notification.message
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Request ID:
+                            </strong>
+
+                            #${escapeHtml(
+                                notification.details.requestId
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Hospital:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.hospital
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Patient:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.patient
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Blood Group:
+                            </strong>
+
+                            🩸 ${escapeHtml(
+                                notification.details.bloodGroup
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Blood Units:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.units
+                            )}
+
+                        </p>
+
+                        <p>
+                            <strong>
+                                City:
+                            </strong>
+
+                            📍 ${escapeHtml(
+                                notification.details.city
+                            )}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Reason:
+                            </strong>
+
+                            ${escapeHtml(
+                                notification.details.reason
+                            )}
+                        </p>
+
+                        <button
+                            class="view-btn"
+                            onclick="viewApprovedRequests()">
+
+                            View Approved Requests
+
+                        </button>
+
+                        <div class="notification-time">
+
+                            ${formatDate(
+                                notification.date
+                            )}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            container.appendChild(card);
+
+        }
+    );
 
 }
 
 
 // =====================================================
-// START
+// VIEW APPROVED DONORS
 // =====================================================
 
-loadNotifications();
+function viewDonors() {
 
+    window.location.href =
+        "donors.html";
+
+}
+
+
+// =====================================================
+// VIEW APPROVED BLOOD REQUESTS
+// =====================================================
+
+function viewApprovedRequests() {
+
+    window.location.href =
+        "approved-hospitals.html";
+
+}
+
+
+// =====================================================
+// CLEAR NOTIFICATIONS
+// =====================================================
+
+function clearNotifications() {
+
+    const container =
+        document.getElementById(
+            "notificationsContainer"
+        );
+
+    container.innerHTML = `
+
+        <div class="empty">
+
+            <h2>
+                🔔 Notifications Cleared
+            </h2>
+
+            <p>
+                Notifications are hidden for this
+                page session.
+            </p>
+
+            <button
+                class="refresh-btn"
+                onclick="loadNotifications()">
+
+                🔄 Load Again
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "totalCount"
+    ).innerText = "0";
+
+
+    document.getElementById(
+        "donorNotificationCount"
+    ).innerText = "0";
+
+
+    document.getElementById(
+        "bloodRequestNotificationCount"
+    ).innerText = "0";
+
+}
+
+
+// =====================================================
+// FORMAT DATE
+// =====================================================
+
+function formatDate(date) {
+
+    if (!date) {
+
+        return "Date not available";
+
+    }
+
+
+    try {
+
+        return new Date(date)
+            .toLocaleString();
+
+    } catch {
+
+        return "Date not available";
+
+    }
+
+}
+
+
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+// =====================================================
+// INITIAL LOAD
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadNotifications
+);
+
+
+// =====================================================
+// AUTO REFRESH
+// =====================================================
+//
+// Check for new notifications every 30 seconds.
+// This does NOT require refreshing the browser.
+//
+
+setInterval(
+    loadNotifications,
+    30000
+);
 
 </script>
 

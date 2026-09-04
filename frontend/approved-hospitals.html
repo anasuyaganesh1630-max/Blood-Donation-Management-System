@@ -1,470 +1,1540 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Approved Hospitals</title>
+```
+<title>Approved Hospitals & Blood Requests</title>
 
-    <style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        color: #333;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            color: #222;
-        }
+    header {
+        background: linear-gradient(135deg, #b71c1c, #e53935);
+        color: white;
+        padding: 30px 50px;
+    }
 
-        /* HEADER */
+    header h1 {
+        margin: 0;
+        font-size: 34px;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #c9151b, #ed2b2f);
-            color: white;
-            padding: 35px 60px;
-        }
+    header p {
+        margin: 8px 0 0;
+        font-size: 17px;
+    }
 
-        .header h1 {
-            font-size: 36px;
-            margin-bottom: 12px;
-        }
+    .container {
+        width: 92%;
+        max-width: 1400px;
+        margin: 30px auto;
+    }
 
-        .header p {
-            font-size: 19px;
-        }
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 15px;
+    }
 
-        /* TOP BUTTONS */
+    button {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
 
-        .top-section {
-            max-width: 1200px;
-            margin: 35px auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 
-        .back-btn,
-        .refresh-btn {
-            border: none;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .back {
+        background: #333;
+    }
 
-        .back-btn {
-            background: #333;
-            color: white;
-        }
+    .refresh {
+        background: #1976d2;
+    }
 
-        .refresh-btn {
-            background: #e52b2f;
-            color: white;
-        }
+    .requests {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+    }
 
-        .back-btn:hover,
-        .refresh-btn:hover {
-            opacity: 0.85;
-        }
+    .request-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border-left: 6px solid #16a34a;
+    }
 
-        /* TITLE */
+    .request-card h2 {
+        color: #b71c1c;
+        margin-top: 10px;
+    }
 
-        .page-title {
-            max-width: 1200px;
-            margin: 0 auto 25px;
-        }
+    .request-id {
+        color: #777;
+        font-size: 14px;
+    }
 
-        .page-title h2 {
-            color: #333;
-            font-size: 28px;
-        }
+    .blood-group {
+        display: inline-block;
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 8px 0 15px;
+    }
 
-        /* CARDS */
+    .status {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        padding: 7px 13px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
 
-        #hospitalContainer {
-            max-width: 1200px;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            padding-bottom: 50px;
-        }
+    .details p {
+        margin: 10px 0;
+        font-size: 16px;
+    }
 
-        .hospital-card {
-            background: white;
-            border-left: 6px solid #e52b2f;
-            border-radius: 15px;
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .edit-btn {
+        background: #1976d2;
+        flex: 1;
+    }
+
+    .edit-btn:hover {
+        background: #1565c0;
+    }
+
+    .delete-btn {
+        background: #dc2626;
+        flex: 1;
+    }
+
+    .delete-btn:hover {
+        background: #b91c1c;
+    }
+
+    .empty {
+        background: white;
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 15px;
+        color: #777;
+        grid-column: 1 / -1;
+    }
+
+    .error {
+        color: #b91c1c;
+    }
+
+    .success {
+        color: #166534;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 750px;
+        margin: 40px auto;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-content h2 {
+        margin-top: 0;
+        color: #b71c1c;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full {
+        grid-column: 1 / 3;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    .form-group textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .save-btn {
+        background: #16a34a;
+        flex: 1;
+    }
+
+    .cancel-btn {
+        background: #555;
+        flex: 1;
+    }
+
+    #editMessage {
+        margin-top: 15px;
+        text-align: center;
+        font-weight: bold;
+        min-height: 20px;
+    }
+
+    @media(max-width:700px) {
+
+        header {
             padding: 25px;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
         }
 
-        .hospital-card h3 {
-            color: #c9151b;
-            font-size: 24px;
-            margin-bottom: 15px;
+        .container {
+            width: 94%;
         }
 
-        .blood-group {
-            display: inline-block;
-            background: #ffe1e3;
-            color: #c9151b;
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            font-size: 18px;
+        .top-bar {
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .hospital-card p {
-            margin: 10px 0;
-            font-size: 16px;
-            line-height: 1.4;
+        .form-grid {
+            grid-template-columns: 1fr;
         }
 
-        .hospital-card strong {
-            color: #222;
+        .form-group.full {
+            grid-column: 1;
         }
 
-        .approved-status {
-            display: inline-block;
-            background: #d9f7df;
-            color: #168534;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
+        .action-buttons {
+            flex-direction: column;
         }
 
-        /* EMPTY */
-
-        .empty-message {
-            grid-column: 1 / -1;
-            background: white;
-            padding: 60px;
-            text-align: center;
-            border-radius: 15px;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        .modal-content {
+            width: 94%;
+            margin: 20px auto;
         }
-
-        .empty-message h2 {
-            color: #c9151b;
-            margin-bottom: 10px;
-        }
-
-        /* ERROR */
-
-        .error-message {
-            grid-column: 1 / -1;
-            background: white;
-            padding: 40px;
-            text-align: center;
-            border-radius: 15px;
-            color: #d71920;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 900px) {
-
-            #hospitalContainer {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 20px;
-            }
-
-            .top-section,
-            .page-title {
-                margin-left: 20px;
-                margin-right: 20px;
-            }
-
-        }
-
-        @media (max-width: 600px) {
-
-            #hospitalContainer {
-                grid-template-columns: 1fr;
-            }
-
-            .header {
-                padding: 30px 25px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .top-section {
-                flex-direction: column;
-                gap: 15px;
-                align-items: stretch;
-            }
-
-        }
-
-    </style>
+    }
+</style>
+```
 
 </head>
 
 <body>
 
-    <!-- HEADER -->
+<header>
 
-    <div class="header">
+```
+<h1>🏥 Approved Hospitals & Blood Requests</h1>
 
-        <h1>🏥 Approved Hospitals</h1>
+<p>
+    Blood requests approved by the administrator
+</p>
+```
 
-        <p>
-            View hospitals with approved blood requests
-        </p>
+</header>
 
+<div class="container">
+
+```
+<div class="top-bar">
+
+    <button
+        type="button"
+        class="back"
+        onclick="goBack()">
+
+        ← Admin Dashboard
+
+    </button>
+
+    <button
+        type="button"
+        class="refresh"
+        id="refreshButton"
+        onclick="loadApprovedRequests()">
+
+        🔄 Refresh
+
+    </button>
+
+</div>
+
+<h2>
+    Approved Blood Requests
+</h2>
+
+<div
+    id="requestsContainer"
+    class="requests">
+
+    <div class="empty">
+        Loading approved blood requests...
     </div>
 
+</div>
+```
 
-    <!-- BUTTONS -->
+</div>
 
-    <div class="top-section">
+<!-- ==========================================
+     EDIT MODAL
+========================================== -->
 
-        <button class="back-btn" onclick="goBack()">
-            ← Back to Admin
-        </button>
+<div
+    id="editModal"
+    class="modal">
 
-        <button class="refresh-btn" onclick="loadApprovedHospitals()">
-            🔄 Refresh
-        </button>
+```
+<div class="modal-content">
 
-    </div>
+    <h2>
+        ✏️ Edit Blood Request
+    </h2>
 
+    <form id="editForm">
 
-    <!-- TITLE -->
+        <input
+            type="hidden"
+            id="editId">
 
-    <div class="page-title">
+        <input
+            type="hidden"
+            id="editHospitalId">
 
-        <h2>
-            Approved Blood Requests
-        </h2>
+        <input
+            type="hidden"
+            id="editRequestDate">
 
-    </div>
+        <input
+            type="hidden"
+            id="editRequiredDate">
 
+        <input
+            type="hidden"
+            id="editStatus">
 
-    <!-- CARDS -->
+        <div class="form-grid">
 
-    <div id="hospitalContainer">
+            <div class="form-group">
 
-        <div class="empty-message">
-            <h2>Loading...</h2>
-            <p>Please wait...</p>
+                <label>
+                    Hospital Name
+                </label>
+
+                <input
+                    type="text"
+                    id="editHospitalName"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Patient Name
+                </label>
+
+                <input
+                    type="text"
+                    id="editPatientName"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Age
+                </label>
+
+                <input
+                    type="number"
+                    id="editAge"
+                    min="1"
+                    max="120"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Gender
+                </label>
+
+                <select
+                    id="editGender"
+                    required>
+
+                    <option value="">
+                        Select Gender
+                    </option>
+
+                    <option value="Male">
+                        Male
+                    </option>
+
+                    <option value="Female">
+                        Female
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Patient Status
+                </label>
+
+                <select
+                    id="editPatientStatus"
+                    required>
+
+                    <option value="">
+                        Select Status
+                    </option>
+
+                    <option value="Stable">
+                        Stable
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                    <option value="Emergency">
+                        Emergency
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Blood Group
+                </label>
+
+                <select
+                    id="editBloodGroup"
+                    required>
+
+                    <option value="">
+                        Select Blood Group
+                    </option>
+
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Blood Units Required
+                </label>
+
+                <input
+                    type="number"
+                    id="editUnitsRequired"
+                    min="1"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    City
+                </label>
+
+                <select
+                    id="editCity"
+                    required>
+
+                    <option value="">
+                        Select City
+                    </option>
+
+                    <option value="Thiruvananthapuram">
+                        Thiruvananthapuram
+                    </option>
+
+                    <option value="Kollam">
+                        Kollam
+                    </option>
+
+                    <option value="Pathanamthitta">
+                        Pathanamthitta
+                    </option>
+
+                    <option value="Alappuzha">
+                        Alappuzha
+                    </option>
+
+                    <option value="Kottayam">
+                        Kottayam
+                    </option>
+
+                    <option value="Idukki">
+                        Idukki
+                    </option>
+
+                    <option value="Ernakulam">
+                        Ernakulam
+                    </option>
+
+                    <option value="Thrissur">
+                        Thrissur
+                    </option>
+
+                    <option value="Palakkad">
+                        Palakkad
+                    </option>
+
+                    <option value="Malappuram">
+                        Malappuram
+                    </option>
+
+                    <option value="Kozhikode">
+                        Kozhikode
+                    </option>
+
+                    <option value="Wayanad">
+                        Wayanad
+                    </option>
+
+                    <option value="Kannur">
+                        Kannur
+                    </option>
+
+                    <option value="Kasaragod">
+                        Kasaragod
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Phone
+                </label>
+
+                <input
+                    type="tel"
+                    id="editPhone"
+                    required>
+
+            </div>
+
+            <div class="form-group full">
+
+                <label>
+                    Reason
+                </label>
+
+                <textarea
+                    id="editReason"
+                    required></textarea>
+
+            </div>
+
         </div>
 
-    </div>
+        <div id="editMessage"></div>
+
+        <div class="modal-buttons">
+
+            <button
+                type="submit"
+                class="save-btn"
+                id="saveButton">
+
+                💾 Save Changes
+
+            </button>
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeEditModal()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<script>
+
+const API_URL =
+    "http://localhost:5000/api/blood-requests";
 
 
-    <script>
+// =========================================================
+// BACK TO ADMIN
+// =========================================================
 
-        // ==========================================
-        // LOAD APPROVED BLOOD REQUESTS
-        // ==========================================
+function goBack() {
 
-        async function loadApprovedHospitals() {
+    window.location.href = "admin.html";
 
-            const container =
-                document.getElementById("hospitalContainer");
+}
 
-            container.innerHTML = `
-                <div class="empty-message">
-                    <h2>Loading...</h2>
-                    <p>Please wait...</p>
-                </div>
-            `;
 
-            try {
+// =========================================================
+// SAFE JSON RESPONSE
+// =========================================================
 
-                const response = await fetch(
-                    "http://localhost:5000/api/requests/approved"
+async function getResponseData(response) {
+
+    const text =
+        await response.text();
+
+    if (!text) {
+        return {};
+    }
+
+    try {
+
+        return JSON.parse(text);
+
+    } catch {
+
+        return {
+            message: text
+        };
+
+    }
+
+}
+
+
+// =========================================================
+// LOAD APPROVED REQUESTS
+// =========================================================
+
+async function loadApprovedRequests() {
+
+    const container =
+        document.getElementById(
+            "requestsContainer"
+        );
+
+    const refreshButton =
+        document.getElementById(
+            "refreshButton"
+        );
+
+    container.innerHTML = `
+        <div class="empty">
+            Loading approved blood requests...
+        </div>
+    `;
+
+    refreshButton.disabled = true;
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/approved`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+
+        const data =
+            await getResponseData(response);
+
+        console.log(
+            "Approved requests response:",
+            data
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                `Server returned HTTP ${response.status}`
+            );
+
+        }
+
+        if (!Array.isArray(data)) {
+
+            throw new Error(
+                "Backend did not return a request list."
+            );
+
+        }
+
+        displayRequests(data);
+
+    } catch (error) {
+
+        console.error(
+            "LOAD APPROVED REQUESTS ERROR:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div class="empty error">
+
+                <h2>
+                    ❌ Failed to load requests
+                </h2>
+
+                <p>
+                    ${escapeHtml(
+                        getErrorMessage(error)
+                    )}
+                </p>
+
+                <p>
+                    Make sure Spring Boot is running
+                    on port 5000.
+                </p>
+
+                <button
+                    type="button"
+                    class="refresh"
+                    onclick="loadApprovedRequests()">
+
+                    🔄 Try Again
+
+                </button>
+
+            </div>
+
+        `;
+
+    } finally {
+
+        refreshButton.disabled = false;
+
+    }
+
+}
+
+
+// =========================================================
+// DISPLAY REQUESTS
+// =========================================================
+
+function displayRequests(requests) {
+
+    const container =
+        document.getElementById(
+            "requestsContainer"
+        );
+
+    if (!requests || requests.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <h2>
+                    🏥 No Approved Requests
+                </h2>
+
+                <p>
+                    No blood requests have been approved yet.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    requests.forEach(request => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "request-card";
+
+        card.innerHTML = `
+
+            <div class="request-id">
+                Request ID: #${escapeHtml(
+                    request.id ?? "N/A"
+                )}
+            </div>
+
+            <h2>
+                🏥 ${escapeHtml(
+                    request.hospitalName ||
+                    "Not provided"
+                )}
+            </h2>
+
+            <div class="blood-group">
+                🩸 ${escapeHtml(
+                    request.bloodGroup ||
+                    "Not provided"
+                )}
+            </div>
+
+            <div class="details">
+
+                <p>
+                    <strong>Patient:</strong>
+                    ${escapeHtml(
+                        request.patientName ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Age:</strong>
+                    ${escapeHtml(
+                        request.age ??
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Gender:</strong>
+                    ${escapeHtml(
+                        request.gender ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Patient Status:</strong>
+                    ${escapeHtml(
+                        request.patientStatus ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Blood Units:</strong>
+                    ${escapeHtml(
+                        request.unitsRequired ??
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>City:</strong>
+                    ${escapeHtml(
+                        request.city ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    ${escapeHtml(
+                        request.phone ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    ${escapeHtml(
+                        request.reason ||
+                        "Not provided"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+
+                    <span class="status">
+                        ${escapeHtml(
+                            request.status ||
+                            "Approved"
+                        )}
+                    </span>
+
+                </p>
+
+            </div>
+
+            <div class="action-buttons">
+
+                <button
+                    type="button"
+                    class="edit-btn"
+                    data-action="edit">
+
+                    ✏️ Edit
+
+                </button>
+
+                <button
+                    type="button"
+                    class="delete-btn"
+                    data-action="delete">
+
+                    🗑️ Delete
+
+                </button>
+
+            </div>
+
+        `;
+
+        const editButton =
+            card.querySelector(
+                '[data-action="edit"]'
+            );
+
+        const deleteButton =
+            card.querySelector(
+                '[data-action="delete"]'
+            );
+
+        editButton.addEventListener(
+            "click",
+            () => openEditModal(request)
+        );
+
+        deleteButton.addEventListener(
+            "click",
+            () => deleteRequest(request.id)
+        );
+
+        container.appendChild(card);
+
+    });
+
+}
+
+
+// =========================================================
+// OPEN EDIT MODAL
+// =========================================================
+
+function openEditModal(request) {
+
+    document.getElementById(
+        "editId"
+    ).value =
+        request.id ?? "";
+
+    document.getElementById(
+        "editHospitalId"
+    ).value =
+        request.hospitalId ?? "";
+
+    document.getElementById(
+        "editRequestDate"
+    ).value =
+        request.requestDate ?? "";
+
+    document.getElementById(
+        "editRequiredDate"
+    ).value =
+        request.requiredDate ?? "";
+
+    document.getElementById(
+        "editStatus"
+    ).value =
+        request.status || "Approved";
+
+    document.getElementById(
+        "editHospitalName"
+    ).value =
+        request.hospitalName ?? "";
+
+    document.getElementById(
+        "editPatientName"
+    ).value =
+        request.patientName ?? "";
+
+    document.getElementById(
+        "editAge"
+    ).value =
+        request.age ?? "";
+
+    document.getElementById(
+        "editGender"
+    ).value =
+        request.gender ?? "";
+
+    document.getElementById(
+        "editPatientStatus"
+    ).value =
+        request.patientStatus ?? "";
+
+    document.getElementById(
+        "editBloodGroup"
+    ).value =
+        request.bloodGroup ?? "";
+
+    document.getElementById(
+        "editUnitsRequired"
+    ).value =
+        request.unitsRequired ?? "";
+
+    document.getElementById(
+        "editCity"
+    ).value =
+        request.city ?? "";
+
+    document.getElementById(
+        "editPhone"
+    ).value =
+        request.phone ?? "";
+
+    document.getElementById(
+        "editReason"
+    ).value =
+        request.reason ?? "";
+
+    document.getElementById(
+        "editMessage"
+    ).textContent = "";
+
+    document.getElementById(
+        "editModal"
+    ).style.display = "block";
+
+}
+
+
+// =========================================================
+// CLOSE EDIT MODAL
+// =========================================================
+
+function closeEditModal() {
+
+    document.getElementById(
+        "editModal"
+    ).style.display = "none";
+
+}
+
+
+// =========================================================
+// SAVE EDIT
+// =========================================================
+
+document.getElementById(
+    "editForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        const id =
+            document.getElementById(
+                "editId"
+            ).value;
+
+        const message =
+            document.getElementById(
+                "editMessage"
+            );
+
+        const saveButton =
+            document.getElementById(
+                "saveButton"
+            );
+
+        if (!id) {
+
+            message.style.color =
+                "#dc2626";
+
+            message.textContent =
+                "❌ Request ID is missing.";
+
+            return;
+
+        }
+
+        const requestData = {
+
+            hospitalId:
+                getNumberOrNull(
+                    document.getElementById(
+                        "editHospitalId"
+                    ).value
+                ),
+
+            hospitalName:
+                document.getElementById(
+                    "editHospitalName"
+                ).value.trim(),
+
+            patientName:
+                document.getElementById(
+                    "editPatientName"
+                ).value.trim(),
+
+            age:
+                getNumberOrNull(
+                    document.getElementById(
+                        "editAge"
+                    ).value
+                ),
+
+            gender:
+                document.getElementById(
+                    "editGender"
+                ).value,
+
+            patientStatus:
+                document.getElementById(
+                    "editPatientStatus"
+                ).value,
+
+            bloodGroup:
+                document.getElementById(
+                    "editBloodGroup"
+                ).value,
+
+            unitsRequired:
+                getNumberOrNull(
+                    document.getElementById(
+                        "editUnitsRequired"
+                    ).value
+                ),
+
+            city:
+                document.getElementById(
+                    "editCity"
+                ).value,
+
+            phone:
+                document.getElementById(
+                    "editPhone"
+                ).value.trim(),
+
+            reason:
+                document.getElementById(
+                    "editReason"
+                ).value.trim(),
+
+            requestDate:
+                document.getElementById(
+                    "editRequestDate"
+                ).value || null,
+
+            requiredDate:
+                document.getElementById(
+                    "editRequiredDate"
+                ).value || null,
+
+            status:
+                document.getElementById(
+                    "editStatus"
+                ).value || "Approved"
+
+        };
+
+        console.log(
+            "Updating request:",
+            id,
+            requestData
+        );
+
+        message.style.color =
+            "#333";
+
+        message.textContent =
+            "Saving changes...";
+
+        saveButton.disabled = true;
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/${encodeURIComponent(id)}`,
+                    {
+                        method: "PUT",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                requestData
+                            )
+                    }
                 );
 
-                const data = await response.json();
-
-                console.log("Approved requests:", data);
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.message ||
-                        "Failed to load approved hospitals"
-                    );
-
-                }
-
-
-                container.innerHTML = "";
-
-
-                // NO APPROVED REQUESTS
-
-                if (data.length === 0) {
-
-                    container.innerHTML = `
-                        <div class="empty-message">
-
-                            <h2>
-                                🏥 No Approved Hospitals
-                            </h2>
-
-                            <p>
-                                No approved blood requests are available.
-                            </p>
-
-                        </div>
-                    `;
-
-                    return;
-                }
-
-
-                // CREATE CARDS
-
-                data.forEach(request => {
-
-                    const card =
-                        document.createElement("div");
-
-                    card.className =
-                        "hospital-card";
-
-
-                    card.innerHTML = `
-
-                        <h3>
-                            🏥 ${request.hospital_name}
-                        </h3>
-
-
-                        <div class="blood-group">
-                            🩸 ${request.blood_group}
-                        </div>
-
-
-                        <p>
-                            <strong>Patient Name:</strong>
-                            ${request.patient_name}
-                        </p>
-
-
-                        <p>
-                            <strong>Age:</strong>
-                            ${request.age}
-                        </p>
-
-
-                        <p>
-                            <strong>Gender:</strong>
-                            ${request.gender}
-                        </p>
-
-
-                        <p>
-                            <strong>Blood Group:</strong>
-                            ${request.blood_group}
-                        </p>
-
-
-                        <p>
-                            <strong>Required Units:</strong>
-                            ${request.units}
-                        </p>
-
-
-                        <p>
-                            <strong>City:</strong>
-                            ${request.city}
-                        </p>
-
-
-                        <p>
-                            <strong>Phone:</strong>
-                            ${request.phone}
-                        </p>
-
-
-                        <p>
-                            <strong>Reason:</strong>
-                            ${request.reason}
-                        </p>
-
-
-                        <p>
-                            <strong>Status:</strong>
-
-                            <span class="approved-status">
-                                Approved
-                            </span>
-
-                        </p>
-
-                    `;
-
-
-                    container.appendChild(card);
-
-                });
-
-
-            } catch (error) {
-
-                console.error(
-                    "APPROVED HOSPITAL ERROR:",
-                    error
+            const result =
+                await getResponseData(
+                    response
                 );
 
+            console.log(
+                "Update response:",
+                result
+            );
 
-                container.innerHTML = `
+            if (!response.ok) {
 
-                    <div class="error-message">
-
-                        ❌ Failed to load approved hospitals
-
-                        <br><br>
-
-                        <small>
-                            ${error.message}
-                        </small>
-
-                    </div>
-
-                `;
+                throw new Error(
+                    result.message ||
+                    `Update failed. HTTP ${response.status}`
+                );
 
             }
 
+            alert(
+                "✅ Blood request updated successfully!"
+            );
+
+            closeEditModal();
+
+            await loadApprovedRequests();
+
+        } catch (error) {
+
+            console.error(
+                "UPDATE REQUEST ERROR:",
+                error
+            );
+
+            message.style.color =
+                "#dc2626";
+
+            message.textContent =
+                "❌ " +
+                getErrorMessage(error);
+
+        } finally {
+
+            saveButton.disabled = false;
+
         }
 
+    }
+);
 
-        // ==========================================
-        // BACK TO ADMIN
-        // ==========================================
 
-        function goBack() {
+// =========================================================
+// DELETE REQUEST
+// =========================================================
 
-            window.location.href =
-                "admin.html";
+async function deleteRequest(id) {
+
+    if (!id) {
+
+        alert(
+            "❌ Request ID is missing."
+        );
+
+        return;
+
+    }
+
+    const confirmed =
+        confirm(
+            "⚠️ Are you sure you want to delete this blood request?\n\n" +
+            "This action cannot be undone."
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        console.log(
+            "Deleting blood request:",
+            id
+        );
+
+        const response =
+            await fetch(
+                `${API_URL}/${encodeURIComponent(id)}`,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+        const result =
+            await getResponseData(
+                response
+            );
+
+        console.log(
+            "Delete response:",
+            result
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                `Delete failed. HTTP ${response.status}`
+            );
 
         }
 
+        alert(
+            "🗑️ Blood request deleted successfully!"
+        );
 
-        // ==========================================
-        // LOAD WHEN PAGE OPENS
-        // ==========================================
+        await loadApprovedRequests();
 
-        loadApprovedHospitals();
+    } catch (error) {
 
-    </script>
+        console.error(
+            "DELETE REQUEST ERROR:",
+            error
+        );
+
+        alert(
+            "❌ " +
+            getErrorMessage(error)
+        );
+
+    }
+
+}
+
+
+// =========================================================
+// NUMBER HELPER
+// =========================================================
+
+function getNumberOrNull(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return null;
+    }
+
+    const number =
+        Number(value);
+
+    return Number.isNaN(number)
+        ? null
+        : number;
+
+}
+
+
+// =========================================================
+// ERROR MESSAGE
+// =========================================================
+
+function getErrorMessage(error) {
+
+    if (
+        error &&
+        error.message === "Failed to fetch"
+    ) {
+
+        return (
+            "Cannot connect to the backend. " +
+            "Make sure Spring Boot is running on " +
+            "http://localhost:5000 and that CORS is configured."
+        );
+
+    }
+
+    return error &&
+        error.message
+        ? error.message
+        : "Unknown error occurred.";
+
+}
+
+
+// =========================================================
+// ESCAPE HTML
+// =========================================================
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+// =========================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// =========================================================
+
+window.addEventListener(
+    "click",
+    function(event) {
+
+        const modal =
+            document.getElementById(
+                "editModal"
+            );
+
+        if (
+            event.target === modal
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+// =========================================================
+// ESCAPE KEY CLOSES MODAL
+// =========================================================
+
+window.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeEditModal();
+
+        }
+
+    }
+);
+
+
+// =========================================================
+// LOAD PAGE
+// =========================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadApprovedRequests();
+
+    }
+);
+
+</script>
 
 </body>
 

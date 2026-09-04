@@ -12,11 +12,132 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <link rel="stylesheet" href="reports.css">
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        nav {
+            background: linear-gradient(135deg, #b71c1c, #e53935);
+            color: white;
+            padding: 25px 50px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 18px;
+            border-radius: 8px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1400px;
+            margin: 30px auto;
+        }
+
+        .summary-container {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            border-left: 6px solid #d32f2f;
+        }
+
+        .summary-card h3 {
+            margin-top: 0;
+            color: #555;
+        }
+
+        .summary-card p {
+            font-size: 40px;
+            font-weight: bold;
+            color: #d32f2f;
+            margin: 10px 0 0;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            margin-bottom: 30px;
+        }
+
+        .chart-card h2 {
+            margin-top: 0;
+            color: #b71c1c;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .message {
+            text-align: center;
+            padding: 30px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        @media(max-width: 700px) {
+
+            nav {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
+
 
 <nav>
 
@@ -31,73 +152,110 @@
 
 <div class="container">
 
-    <!-- ===================================== -->
+
+    <!-- ========================================= -->
     <!-- SUMMARY -->
-    <!-- ===================================== -->
+    <!-- ========================================= -->
 
     <div class="summary-container">
 
         <div class="summary-card">
-            <h3>🩸 Approved Donors</h3>
-            <p id="totalDonors">0</p>
+
+            <h3>
+                🩸 Approved Donors
+            </h3>
+
+            <p id="totalDonors">
+                0
+            </p>
+
         </div>
 
 
         <div class="summary-card">
-            <h3>⏳ Pending Registrations</h3>
-            <p id="pendingRegistrations">0</p>
+
+            <h3>
+                ⏳ Pending Registrations
+            </h3>
+
+            <p id="pendingRegistrations">
+                0
+            </p>
+
         </div>
 
     </div>
 
 
-    <!-- ===================================== -->
-    <!-- DONOR BLOOD GROUP -->
-    <!-- ===================================== -->
+    <!-- ========================================= -->
+    <!-- BLOOD GROUP -->
+    <!-- ========================================= -->
 
     <div class="chart-card">
 
-        <h2>🩸 Approved Donors by Blood Group</h2>
+        <h2>
+            🩸 Approved Donors by Blood Group
+        </h2>
 
-        <canvas id="bloodGroupChart"></canvas>
+        <div class="chart-container">
+
+            <canvas id="bloodGroupChart"></canvas>
+
+        </div>
 
     </div>
 
 
-    <!-- ===================================== -->
-    <!-- DONOR CITY -->
-    <!-- ===================================== -->
+    <!-- ========================================= -->
+    <!-- CITY -->
+    <!-- ========================================= -->
 
     <div class="chart-card">
 
-        <h2>📍 Approved Donors by City</h2>
+        <h2>
+            📍 Approved Donors by City
+        </h2>
 
-        <canvas id="cityChart"></canvas>
+        <div class="chart-container">
+
+            <canvas id="cityChart"></canvas>
+
+        </div>
 
     </div>
 
 
+    <!-- ========================================= -->
+    <!-- STATUS -->
+    <!-- ========================================= -->
+
+    <div
+        id="message"
+        class="message">
+    </div>
 
 
-
-    <!-- ===================================== -->
-    <!-- REQUEST BLOOD GROUP -->
-    <!-- ===================================== -->
-
-
+</div>
 
 
 <script>
 
 
 // =====================================================
-// GLOBAL DATA
+// API
 // =====================================================
 
-let approvedDonors = [];
+const REGISTRATION_API =
+    "http://localhost:5000/api/registrations";
 
 
-let pendingRegistrations = [];
+// =====================================================
+// GLOBAL
+// =====================================================
+
+let bloodGroupChart = null;
+
+let cityChart = null;
 
 
 // =====================================================
@@ -108,53 +266,96 @@ async function loadApprovedDonors() {
 
     try {
 
-        const response = await fetch(
-            "http://localhost:5000/api/donors/approved"
+        const response =
+            await fetch(
+                `${REGISTRATION_API}/donors/approved`
+            );
+
+
+        const text =
+            await response.text();
+
+
+        console.log(
+            "Approved donors response:",
+            text
         );
+
 
         if (!response.ok) {
 
             throw new Error(
-                "Failed to load approved donors"
+                `Server error: ${response.status}`
             );
 
         }
 
-        approvedDonors = await response.json();
+
+        const donors =
+            JSON.parse(text);
+
 
         console.log(
-            "Approved Donors:",
-            approvedDonors
+            "Approved donors:",
+            donors
         );
 
 
         document.getElementById(
             "totalDonors"
-        ).innerText = approvedDonors.length;
+        ).innerText =
+            donors.length;
 
 
-        createBloodGroupChart();
+        /*
+         * IMPORTANT:
+         *
+         * Your current PendingRegistrationResponse
+         * contains only:
+         *
+         * id
+         * name
+         * email
+         * role
+         * createdAt
+         * status
+         *
+         * Therefore blood group and city are not
+         * available here.
+         */
 
-        createCityChart();
+
+        createBloodGroupChart(donors);
+
+        createCityChart(donors);
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Approved donor error:",
+            error
+        );
+
 
         document.getElementById(
             "totalDonors"
-        ).innerText = "Error";
+        ).innerText =
+            "Error";
+
+
+        document.getElementById(
+            "message"
+        ).innerHTML = `
+            <span class="error">
+                ❌ Failed to load approved donors:
+                ${escapeHtml(error.message)}
+            </span>
+        `;
 
     }
 
 }
-
-
-// =====================================================
-// LOAD BLOOD REQUESTS
-// =====================================================
-
 
 
 // =====================================================
@@ -165,35 +366,53 @@ async function loadPendingRegistrations() {
 
     try {
 
-        const response = await fetch(
-            "http://localhost:5000/api/registration/pending"
+        const response =
+            await fetch(
+                `${REGISTRATION_API}/pending`
+            );
+
+
+        const text =
+            await response.text();
+
+
+        console.log(
+            "Pending registrations response:",
+            text
         );
+
 
         if (!response.ok) {
 
             throw new Error(
-                "Failed to load registrations"
+                `Server error: ${response.status}`
             );
 
         }
 
-        pendingRegistrations =
-            await response.json();
+
+        const registrations =
+            JSON.parse(text);
 
 
         document.getElementById(
             "pendingRegistrations"
         ).innerText =
-            pendingRegistrations.length;
+            registrations.length;
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Pending registration error:",
+            error
+        );
+
 
         document.getElementById(
             "pendingRegistrations"
-        ).innerText = "Error";
+        ).innerText =
+            "Error";
 
     }
 
@@ -204,9 +423,10 @@ async function loadPendingRegistrations() {
 // BLOOD GROUP CHART
 // =====================================================
 
-function createBloodGroupChart() {
+function createBloodGroupChart(donors) {
 
     const groups = [
+
         "A+",
         "A-",
         "B+",
@@ -215,24 +435,37 @@ function createBloodGroupChart() {
         "AB-",
         "O+",
         "O-"
+
     ];
 
 
-    const counts = groups.map(group => {
+    const counts =
+        groups.map(group => {
 
-        return approvedDonors.filter(
-            donor =>
-                donor.blood_group === group
-        ).length;
+            return donors.filter(
+                donor =>
+                    donor.bloodGroup === group ||
+                    donor.blood_group === group
+            ).length;
 
-    });
+        });
 
 
-    new Chart(
+    const canvas =
         document.getElementById(
             "bloodGroupChart"
-        ),
-        {
+        );
+
+
+    if (bloodGroupChart) {
+
+        bloodGroupChart.destroy();
+
+    }
+
+
+    bloodGroupChart =
+        new Chart(canvas, {
 
             type: "bar",
 
@@ -255,6 +488,8 @@ function createBloodGroupChart() {
 
                 responsive: true,
 
+                maintainAspectRatio: false,
+
                 scales: {
 
                     y: {
@@ -271,9 +506,7 @@ function createBloodGroupChart() {
 
             }
 
-        }
-
-    );
+        });
 
 }
 
@@ -282,15 +515,16 @@ function createBloodGroupChart() {
 // CITY CHART
 // =====================================================
 
-function createCityChart() {
+function createCityChart(donors) {
 
     const cityCounts = {};
 
 
-    approvedDonors.forEach(donor => {
+    donors.forEach(donor => {
 
         const city =
-            donor.city || "Unknown";
+            donor.city ||
+            "Unknown";
 
 
         if (!cityCounts[city]) {
@@ -298,6 +532,7 @@ function createCityChart() {
             cityCounts[city] = 0;
 
         }
+
 
         cityCounts[city]++;
 
@@ -307,28 +542,45 @@ function createCityChart() {
     const labels =
         Object.keys(cityCounts);
 
+
     const counts =
         Object.values(cityCounts);
 
 
-    new Chart(
+    const canvas =
         document.getElementById(
             "cityChart"
-        ),
-        {
+        );
+
+
+    if (cityChart) {
+
+        cityChart.destroy();
+
+    }
+
+
+    cityChart =
+        new Chart(canvas, {
 
             type: "bar",
 
             data: {
 
-                labels: labels,
+                labels:
+                    labels.length
+                        ? labels
+                        : ["No Data"],
 
                 datasets: [{
 
                     label:
                         "Approved Donors",
 
-                    data: counts
+                    data:
+                        counts.length
+                            ? counts
+                            : [0]
 
                 }]
 
@@ -337,6 +589,8 @@ function createCityChart() {
             options: {
 
                 responsive: true,
+
+                maintainAspectRatio: false,
 
                 scales: {
 
@@ -354,84 +608,24 @@ function createCityChart() {
 
             }
 
-        }
-
-    );
+        });
 
 }
 
 
+// =====================================================
+// ESCAPE HTML
+// =====================================================
 
-function createRequestBloodChart() {
+function escapeHtml(value) {
 
-    const groups = [
-        "A+",
-        "A-",
-        "B+",
-        "B-",
-        "AB+",
-        "AB-",
-        "O+",
-        "O-"
-    ];
+    const div =
+        document.createElement("div");
 
+    div.textContent =
+        value ?? "";
 
-    const counts = groups.map(group => {
-
-        return bloodRequests.filter(
-            request =>
-                request.blood_group === group
-        ).length;
-
-    });
-
-
-    new Chart(
-        document.getElementById(
-            "requestBloodChart"
-        ),
-        {
-
-            type: "bar",
-
-            data: {
-
-                labels: groups,
-
-                datasets: [{
-
-                    label:
-                        "Blood Requests",
-
-                    data: counts
-
-                }]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                scales: {
-
-                    y: {
-
-                        beginAtZero: true,
-
-                        ticks: {
-                            stepSize: 1
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    );
+    return div.innerHTML;
 
 }
 
@@ -440,12 +634,20 @@ function createRequestBloodChart() {
 // LOAD EVERYTHING
 // =====================================================
 
-loadApprovedDonors();
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
 
-loadPendingRegistrations();
+        loadApprovedDonors();
+
+        loadPendingRegistrations();
+
+    }
+);
 
 
 </script>
+
 
 </body>
 

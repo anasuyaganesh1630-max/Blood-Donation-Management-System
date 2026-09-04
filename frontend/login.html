@@ -9,6 +9,11 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <div class="top-nav">
+    <button onclick="goBack()">
+        ← Back
+    </button>
+</div>
 <div class="drop drop1">🩸</div>
 <div class="drop drop2">🩸</div>
 <div class="drop drop3">🩸</div>
@@ -60,7 +65,9 @@
 </div>
 
 <script>
-
+function goBack() {
+    window.location.href = "index.html";
+}
 function login(){
 
     const username =
@@ -119,72 +126,181 @@ typeText();
 </script>
 <script>
 
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
+document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
 
-    e.preventDefault();
+        event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
 
-    try {
+        const email =
+            document.getElementById("email")
+                .value
+                .trim();
 
-        const response = await fetch("http://localhost:5000/api/login/login", {
+        const password =
+            document.getElementById("password")
+                .value;
 
-            method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        const message =
+            document.getElementById("loginMessage");
 
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
 
-        });
+        message.innerText =
+            "Logging in...";
 
-        const data = await response.json();
-        if (data.user.role === "hospital") {
+        message.style.color = "#333";
 
-    localStorage.setItem(
-        "hospitalName",
-        data.user.name
-    );
 
-    window.location.href = "hospitals.html";
-}
+        try {
 
-        if (!response.ok) {
-            alert(data.message);
-            return;
+            const response = await fetch(
+                "http://localhost:5000/api/login",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Login response:",
+                data
+            );
+
+
+            // =====================================
+            // LOGIN FAILED
+            // =====================================
+
+            if (!response.ok) {
+
+                message.innerText =
+                    data.message ||
+                    "Login failed.";
+
+                message.style.color = "red";
+
+                return;
+            }
+
+
+            // =====================================
+            // LOGIN SUCCESSFUL
+            // =====================================
+
+            message.innerText =
+                "Login successful!";
+
+            message.style.color = "green";
+
+
+            // =====================================
+            // SAVE USER INFORMATION
+            // =====================================
+
+            localStorage.setItem(
+                "userId",
+                data.id
+            );
+
+            localStorage.setItem(
+                "userName",
+                data.name
+            );
+
+            localStorage.setItem(
+                "userEmail",
+                data.email
+            );
+
+            localStorage.setItem(
+                "userRole",
+                data.role
+            );
+
+            localStorage.setItem(
+                "userStatus",
+                data.status
+            );
+
+
+            // =====================================
+            // REDIRECT BASED ON ROLE
+            // =====================================
+
+            setTimeout(function() {
+
+                if (
+                    data.role &&
+                    data.role.toLowerCase() === "admin"
+                ) {
+
+                    window.location.href =
+                        "admin.html";
+
+                }
+
+                else if (
+                    data.role &&
+                    data.role.toLowerCase() === "donor"
+                ) {
+
+                    window.location.href =
+                        "donor.html";
+
+                }
+
+                else if (
+                    data.role &&
+                    data.role.toLowerCase() === "hospital"
+                ) {
+
+                    window.location.href =
+                        "hospital.html";
+
+                }
+
+                else {
+
+                    message.innerText =
+                        "Login successful, but no dashboard is configured for this role.";
+
+                }
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+
+            message.innerText =
+                "Cannot connect to Java backend. Make sure Spring Boot is running.";
+
+            message.style.color = "red";
+
         }
 
-        // Save logged-in user
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // Redirect according to role
-        if (data.user.role === "admin") {
-
-            window.location.href = "admin.html";
-
-        } else if (data.user.role === "donor") {
-
-            window.location.href = "donor.html";
-
-        } else if (data.user.role === "hospital") {
-
-            window.location.href = "hospital.html";
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-        alert("Cannot connect to server");
-
-    }
-
-});
+    });
 
 </script>
 </body>

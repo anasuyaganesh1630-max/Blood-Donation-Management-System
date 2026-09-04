@@ -109,7 +109,35 @@
             }
 
         }
+.top-nav {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    z-index: 1000;
+}
 
+.top-nav button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.top-nav button:hover {
+    background: #555;
+}
+
+@media (max-width: 700px) {
+    .top-nav {
+        top: 15px;
+        left: 15px;
+    }
+}
     </style>
 
 </head>
@@ -117,7 +145,11 @@
 
 <body>
 
-
+<div class="top-nav">
+    <button onclick="goBack()">
+        ← Back
+    </button>
+</div>
 <div class="container">
 
     <h1>🏥 Hospital Blood Request</h1>
@@ -357,78 +389,118 @@
 
 
 <script>
+function goBack() {
+    window.location.href = "index.html";
+}
 document.getElementById("bloodRequestForm").addEventListener("submit", async function(e) {
 
     e.preventDefault();
 
-    const requestData = {
-        hospital_name: document.getElementById("hospital_name").value.trim(),
-        patient_name: document.getElementById("patient_name").value.trim(),
-        age: document.getElementById("age").value,
-        gender: document.getElementById("gender").value,
-        patient_status: document.getElementById("patient_status").value,
-        blood_group: document.getElementById("blood_group").value,
-        units: document.getElementById("units").value,
-        city: document.getElementById("city").value,
-        phone: document.getElementById("phone").value.trim(),
-        reason: document.getElementById("reason").value.trim()
-    };
-
     const message = document.getElementById("message");
+
+    message.style.color = "#333";
+    message.textContent = "Submitting blood request...";
+
+ const requestData = {
+
+    hospitalName:
+        document.getElementById("hospital_name").value.trim(),
+
+    patientName:
+        document.getElementById("patient_name").value.trim(),
+
+    age:
+        Number(document.getElementById("age").value),
+
+    gender:
+        document.getElementById("gender").value,
+
+    patientStatus:
+        document.getElementById("patient_status").value,
+
+    bloodGroup:
+        document.getElementById("blood_group").value,
+
+    unitsRequired:
+        Number(document.getElementById("units").value),
+
+    city:
+        document.getElementById("city").value,
+
+    phone:
+        document.getElementById("phone").value.trim(),
+
+    reason:
+        document.getElementById("reason").value.trim()
+};
+
+    console.log("Sending blood request:", requestData);
 
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/requests/add",
+            "http://localhost:5000/api/blood-requests",
             {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify(requestData)
             }
         );
 
-        // Get response as text first
         const text = await response.text();
 
-        let result;
+        console.log("Backend response:", text);
+
+        let result = {};
 
         try {
             result = JSON.parse(text);
-        } catch (jsonError) {
-            console.error("Invalid server response:", text);
-
-            throw new Error(
-                "Server returned an invalid response. Check backend."
-            );
+        } catch {
+            result = {};
         }
 
         if (!response.ok) {
+
             throw new Error(
-                result.message || "Failed to submit blood request"
+                result.message ||
+                `Server error: ${response.status}`
             );
         }
 
         message.style.color = "green";
+
         message.textContent =
             "🩸 Blood request submitted successfully!";
 
-        alert("🩸 Blood request submitted successfully!");
+        alert(
+            "🩸 Blood request submitted successfully!\n\n" +
+            "Request ID: " +
+            (result.request_id || "Created")
+        );
 
-        document.getElementById("bloodRequestForm").reset();
+        document
+            .getElementById("bloodRequestForm")
+            .reset();
 
     } catch (error) {
 
-        console.error("Blood Request Error:", error);
+        console.error(
+            "Blood Request Error:",
+            error
+        );
 
         message.style.color = "red";
-        message.textContent = "❌ " + error.message;
 
+        message.textContent =
+            "❌ " + error.message;
     }
 
 });
+
 </script>
-<script src="hospital.js"></script>
 </body>
 </html>

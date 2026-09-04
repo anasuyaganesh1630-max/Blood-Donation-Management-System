@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -6,7 +7,7 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+   content="width=device-width, initial-scale=1.0">
 
 <title>Blood Group Statistics</title>
 
@@ -20,6 +21,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f4f6f9;
+    color: #333;
 }
 
 header {
@@ -33,24 +35,48 @@ header h1 {
     margin: 0;
 }
 
+header p {
+    margin-bottom: 0;
+}
+
 .container {
-    width: 90%;
-    max-width: 1100px;
+    width: 92%;
+    max-width: 1200px;
     margin: 30px auto;
 }
 
-.back-btn {
-    background: #333;
-    color: white;
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+
+button {
     border: none;
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
-    margin-bottom: 25px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.back-btn {
+    background: #333;
+}
+
+.refresh-btn {
+    background: #1976d2;
 }
 
 .back-btn:hover {
     background: #111;
+}
+
+.refresh-btn:hover {
+    background: #1565c0;
 }
 
 .card {
@@ -59,6 +85,11 @@ header h1 {
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.08);
     margin-bottom: 25px;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #b71c1c;
 }
 
 table {
@@ -71,6 +102,7 @@ th {
     background: #d32f2f;
     color: white;
     padding: 15px;
+    text-align: center;
 }
 
 td {
@@ -84,9 +116,75 @@ tr:hover {
 }
 
 .count {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     color: #d32f2f;
+}
+
+.total-box {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.total-box h2 {
+    margin: 0 0 10px;
+    color: #555;
+}
+
+.total-number {
+    font-size: 42px;
+    font-weight: bold;
+    color: #d32f2f;
+}
+
+.message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+.error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.empty {
+    padding: 40px;
+    text-align: center;
+    color: #777;
+}
+
+@media(max-width:700px) {
+
+    .container {
+        width: 94%;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        padding: 10px 5px;
+    }
+
 }
 
 </style>
@@ -97,87 +195,167 @@ tr:hover {
 
 <header>
 
-<h1>🩸 Blood Group Statistics</h1>
+```
+<h1>🩸 Blood Statistics</h1>
 
-<p>Donor distribution by blood group and city</p>
+<p>
+    Statistics based only on approved donors
+</p>
+```
 
 </header>
 
-
 <div class="container">
 
-<button
-    class="back-btn"
-    onclick="goBack()">
+```
+<div class="top-bar">
 
-    ← Back to Admin
+    <button
+        class="back-btn"
+        onclick="goBack()">
 
-</button>
+        ← Back to Admin
 
+    </button>
+
+
+    <button
+        class="refresh-btn"
+        onclick="loadApprovedDonors()">
+
+        🔄 Refresh Statistics
+
+    </button>
+
+</div>
+
+
+<div id="message"
+     class="message">
+</div>
+
+
+<!-- TOTAL APPROVED DONORS -->
+
+<div class="total-box">
+
+    <h2>
+        Total Approved Donors
+    </h2>
+
+    <div
+        id="totalDonors"
+        class="total-number">
+
+        0
+
+    </div>
+
+</div>
+
+
+<!-- BLOOD GROUP STATISTICS -->
 
 <div class="card">
 
-<h2>🩸 Blood Group Statistics</h2>
+    <h2>
+        🩸 Blood Group Statistics
+    </h2>
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>Blood Group</th>
-<th>Total Donors</th>
-</tr>
+            <tr>
 
-</thead>
+                <th>
+                    Blood Group
+                </th>
 
-<tbody id="bloodStats">
+                <th>
+                    Approved Donors
+                </th>
 
-<tr>
-<td colspan="2">
-Loading...
-</td>
-</tr>
+            </tr>
 
-</tbody>
+        </thead>
 
-</table>
+        <tbody id="bloodStats">
+
+            <tr>
+
+                <td colspan="2">
+                    Loading...
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
 
 </div>
 
+
+<!-- CITY STATISTICS -->
 
 <div class="card">
 
-<h2>📍 City Statistics</h2>
+    <h2>
+        📍 City Statistics
+    </h2>
 
-<table>
+    <table>
 
-<thead>
+        <thead>
 
-<tr>
-<th>City</th>
-<th>Total Donors</th>
-</tr>
+            <tr>
 
-</thead>
+                <th>
+                    City
+                </th>
 
-<tbody id="cityStats">
+                <th>
+                    Approved Donors
+                </th>
 
-<tr>
-<td colspan="2">
-Loading...
-</td>
-</tr>
+            </tr>
 
-</tbody>
+        </thead>
 
-</table>
+        <tbody id="cityStats">
+
+            <tr>
+
+                <td colspan="2">
+                    Loading...
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
 
 </div>
+```
 
 </div>
-
 
 <script>
+
+
+// =====================================================
+// API
+// =====================================================
+
+const API_URL =
+    "http://localhost:5000/api/registrations/donors/approved";
+
+
+// =====================================================
+// BACK TO ADMIN
+// =====================================================
 
 function goBack() {
 
@@ -186,66 +364,290 @@ function goBack() {
 }
 
 
-// =====================================
+// =====================================================
+// MESSAGE
+// =====================================================
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+    message.style.display = "block";
+
+}
+
+
+// =====================================================
+// LOAD APPROVED DONORS
+// =====================================================
+
+async function loadApprovedDonors() {
+
+    const bloodTable =
+        document.getElementById("bloodStats");
+
+    const cityTable =
+        document.getElementById("cityStats");
+
+    bloodTable.innerHTML = `
+        <tr>
+            <td colspan="2">
+                Loading...
+            </td>
+        </tr>
+    `;
+
+    cityTable.innerHTML = `
+        <tr>
+            <td colspan="2">
+                Loading...
+            </td>
+        </tr>
+    `;
+
+    document.getElementById("totalDonors")
+        .textContent = "0";
+
+    try {
+
+        const response =
+            await fetch(API_URL);
+
+        const text =
+            await response.text();
+
+        console.log(
+            "Approved donors response:",
+            text
+        );
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned HTTP ${response.status}`
+            );
+
+        }
+
+        let donors;
+
+        try {
+
+            donors =
+                JSON.parse(text);
+
+        } catch {
+
+            throw new Error(
+                "Backend returned invalid JSON"
+            );
+
+        }
+
+
+        if (!Array.isArray(donors)) {
+
+            throw new Error(
+                "Backend did not return a donor list"
+            );
+
+        }
+
+
+        // Only approved donors should be present
+        const approvedDonors =
+            donors.filter(donor => {
+
+                const status =
+                    String(
+                        donor.status || ""
+                    ).trim().toLowerCase();
+
+                return status === "approved";
+
+            });
+
+
+        document.getElementById(
+            "totalDonors"
+        ).textContent =
+            approvedDonors.length;
+
+
+        calculateBloodGroups(
+            approvedDonors
+        );
+
+
+        calculateCities(
+            approvedDonors
+        );
+
+
+        showMessage(
+            "Statistics loaded from approved donors.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Statistics error:",
+            error
+        );
+
+
+        bloodTable.innerHTML = `
+            <tr>
+                <td colspan="2">
+                    ❌ Cannot load approved donors
+                </td>
+            </tr>
+        `;
+
+
+        cityTable.innerHTML = `
+            <tr>
+                <td colspan="2">
+                    ❌ Cannot load approved donors
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            "❌ " + error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+// =====================================================
 // BLOOD GROUP STATISTICS
-// =====================================
+// =====================================================
 
-async function loadBloodStats() {
+function calculateBloodGroups(donors) {
 
-    try {
+    const groups = [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+    ];
 
-        const response = await fetch(
-            "http://localhost:5000/api/donors/stats"
-        );
 
-        const data = await response.json();
+    const counts = {};
 
-        const table =
-            document.getElementById("bloodStats");
 
-        table.innerHTML = "";
+    groups.forEach(group => {
 
-        if (data.length === 0) {
+        counts[group] = 0;
 
-            table.innerHTML = `
-                <tr>
-                    <td colspan="2">
-                        No donor data available
-                    </td>
-                </tr>
-            `;
+    });
+
+
+    donors.forEach(donor => {
+
+        // Supports both bloodGroup and blood_group
+
+        const bloodGroup =
+            donor.bloodGroup ||
+            donor.blood_group;
+
+
+        if (!bloodGroup) {
 
             return;
+
         }
 
-        data.forEach(item => {
 
-            table.innerHTML += `
-                <tr>
+        const group =
+            String(
+                bloodGroup
+            ).trim().toUpperCase();
 
-                    <td>
-                        🩸 ${item.blood_group}
-                    </td>
 
-                    <td class="count">
-                        ${item.total}
-                    </td>
+        if (counts[group] !== undefined) {
 
-                </tr>
-            `;
+            counts[group]++;
 
-        });
+        }
 
-    } catch (error) {
+    });
 
-        console.error(error);
 
-        document.getElementById("bloodStats").innerHTML = `
+    const table =
+        document.getElementById(
+            "bloodStats"
+        );
+
+
+    table.innerHTML = "";
+
+
+    let total = 0;
+
+
+    groups.forEach(group => {
+
+        const count =
+            counts[group];
+
+        total += count;
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                🩸 ${escapeHtml(group)}
+            </td>
+
+            <td class="count">
+                ${count}
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+
+    if (total === 0) {
+
+        table.innerHTML = `
+
             <tr>
+
                 <td colspan="2">
-                    ❌ Cannot connect to server
+
+                    No blood-group information
+                    available for approved donors.
+
                 </td>
+
             </tr>
+
         `;
 
     }
@@ -253,75 +655,142 @@ async function loadBloodStats() {
 }
 
 
-// =====================================
+// =====================================================
 // CITY STATISTICS
-// =====================================
+// =====================================================
 
-async function loadCityStats() {
+function calculateCities(donors) {
 
-    try {
+    const cityCounts = {};
 
-        const response = await fetch(
-            "http://localhost:5000/api/donors/citystats"
-        );
 
-        const data = await response.json();
+    donors.forEach(donor => {
 
-        const table =
-            document.getElementById("cityStats");
+        // Supports both city and city_name
 
-        table.innerHTML = "";
+        const city =
+            donor.city ||
+            donor.city_name;
 
-        if (data.length === 0) {
 
-            table.innerHTML = `
-                <tr>
-                    <td colspan="2">
-                        No city data available
-                    </td>
-                </tr>
-            `;
+        if (!city) {
 
             return;
+
         }
 
-        data.forEach(item => {
 
-            table.innerHTML += `
-                <tr>
+        const cityName =
+            String(city).trim();
 
-                    <td>
-                        📍 ${item.city}
-                    </td>
 
-                    <td class="count">
-                        ${item.total}
-                    </td>
+        if (!cityName) {
 
-                </tr>
-            `;
+            return;
 
-        });
+        }
 
-    } catch (error) {
 
-        console.error(error);
+        if (!cityCounts[cityName]) {
 
-        document.getElementById("cityStats").innerHTML = `
+            cityCounts[cityName] = 0;
+
+        }
+
+
+        cityCounts[cityName]++;
+
+    });
+
+
+    const table =
+        document.getElementById(
+            "cityStats"
+        );
+
+
+    table.innerHTML = "";
+
+
+    const cities =
+        Object.keys(cityCounts)
+            .sort();
+
+
+    if (cities.length === 0) {
+
+        table.innerHTML = `
+
             <tr>
+
                 <td colspan="2">
-                    ❌ Cannot connect to server
+
+                    No city information
+                    available for approved donors.
+
                 </td>
+
             </tr>
+
         `;
 
+        return;
+
     }
+
+
+    cities.forEach(city => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                📍 ${escapeHtml(city)}
+            </td>
+
+            <td class="count">
+                ${cityCounts[city]}
+            </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
 
 }
 
 
-loadBloodStats();
-loadCityStats();
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+// =====================================================
+// LOAD PAGE
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadApprovedDonors
+);
+
 
 </script>
 

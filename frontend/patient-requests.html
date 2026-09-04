@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Patient Blood Requests</title>
+    <title>Admin - Blood Requests</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -24,28 +19,24 @@
         }
 
         header {
-            background: linear-gradient(
-                135deg,
-                #b71c1c,
-                #e53935
-            );
-
+            background: linear-gradient(135deg, #b71c1c, #e53935);
             color: white;
             padding: 30px 50px;
         }
 
         header h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 34px;
         }
 
         header p {
             margin-bottom: 0;
+            font-size: 17px;
         }
 
         .container {
             width: 92%;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
         }
 
@@ -54,17 +45,16 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            gap: 10px;
         }
 
         .back-btn,
         .refresh-btn {
             border: none;
-            padding: 12px 20px;
+            padding: 13px 22px;
             border-radius: 8px;
             color: white;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
         }
 
@@ -79,19 +69,15 @@
         .requests {
             display: grid;
             grid-template-columns:
-                repeat(auto-fit, minmax(320px, 1fr));
-
-            gap: 20px;
+                repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
         }
 
         .request-card {
             background: white;
             padding: 25px;
             border-radius: 15px;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,0.08);
-
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             border-left: 6px solid #d32f2f;
         }
 
@@ -100,238 +86,168 @@
             color: #b71c1c;
         }
 
-        .blood {
-            display: inline-block;
-
-            background: #ffe5e5;
-            color: #b71c1c;
-
-            font-size: 20px;
-            font-weight: bold;
-
-            padding: 8px 15px;
-            border-radius: 20px;
-
+        .request-id {
+            color: #777;
+            font-size: 14px;
             margin-bottom: 15px;
         }
 
-        .request-card p {
-            margin: 10px 0;
+        .blood-group {
+            display: inline-block;
+            background: #ffe5e5;
+            color: #b71c1c;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
         }
 
         .status {
             display: inline-block;
-
-            padding: 6px 12px;
-
-            border-radius: 15px;
-
             background: #fff3cd;
             color: #856404;
-
+            padding: 7px 13px;
+            border-radius: 20px;
             font-weight: bold;
         }
 
-        /* BUTTON CONTAINER */
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
+        .details p {
+            margin: 11px 0;
+            font-size: 16px;
         }
 
-        /* APPROVE */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .approve,
+        .reject {
+            flex: 1;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
 
         .approve {
-            flex: 1;
-
             background: #16a34a;
-            color: white;
-
-            border: none;
-
-            padding: 12px;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            font-weight: bold;
-            font-size: 15px;
         }
 
         .approve:hover {
             background: #15803d;
         }
 
-        /* REJECT */
-
         .reject {
-            flex: 1;
-
             background: #dc2626;
-            color: white;
-
-            border: none;
-
-            padding: 12px;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            font-weight: bold;
-            font-size: 15px;
         }
 
         .reject:hover {
             background: #b91c1c;
         }
 
-        /* DISABLED */
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .empty {
             background: white;
-
-            padding: 50px;
-
+            padding: 60px 20px;
             text-align: center;
-
             border-radius: 15px;
-
             color: #777;
+            grid-column: 1 / -1;
         }
 
         .error {
-            color: #b71c1c;
-            font-weight: bold;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 25px;
+            border-radius: 12px;
+            grid-column: 1 / -1;
         }
 
-        @media(max-width:600px) {
+        @media(max-width: 700px) {
 
             header {
                 padding: 25px;
             }
 
-            header h1 {
-                font-size: 25px;
+            .container {
+                width: 94%;
             }
 
             .top-bar {
-                flex-direction: column;
-                align-items: stretch;
+                gap: 10px;
             }
 
-            .action-buttons {
+            .buttons {
                 flex-direction: column;
             }
-
         }
-        .buttons {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.approve,
-.reject {
-    flex: 1;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.approve {
-    background: #16a34a;
-}
-
-.approve:hover {
-    background: #15803d;
-}
-
-.reject {
-    background: #dc2626;
-}
-
-.reject:hover {
-    background: #b91c1c;
-}
-
     </style>
-
 </head>
-
 
 <body>
 
-
 <header>
-
-    <h1>🏥 Patient Blood Requests</h1>
-
-    <p>
-        View and manage blood requests submitted by hospitals
-    </p>
-
+    <h1>🩸 Blood Requests</h1>
+    <p>Admin panel — review and manage hospital blood requests</p>
 </header>
 
-
 <div class="container">
-
 
     <div class="top-bar">
 
         <button
             class="back-btn"
             onclick="goBack()">
-
-            ← Back to Admin
-
+            ← Admin Dashboard
         </button>
-
 
         <button
             class="refresh-btn"
             onclick="loadRequests()">
-
             🔄 Refresh
-
         </button>
 
     </div>
 
+    <h2>Pending Blood Requests</h2>
 
-    <div id="requestsContainer">
+    <div
+        id="requestsContainer"
+        class="requests">
 
         <div class="empty">
-
-            Loading patient requests...
-
+            Loading blood requests...
         </div>
 
     </div>
 
-
 </div>
+
 
 <script>
 
+const API_URL =
+    "http://localhost:5000/api/blood-requests";
+
+
+// ==========================================
+// BACK TO ADMIN DASHBOARD
+// ==========================================
+
 function goBack() {
+
     window.location.href = "admin.html";
+
 }
 
 
 // ==========================================
-// LOAD ALL BLOOD REQUESTS
+// LOAD PENDING REQUESTS
 // ==========================================
 
 async function loadRequests() {
@@ -341,541 +257,417 @@ async function loadRequests() {
 
     container.innerHTML = `
         <div class="empty">
-            Loading patient requests...
+            Loading blood requests...
         </div>
     `;
 
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/requests/pending"
+            `${API_URL}/pending`
         );
 
         const text = await response.text();
 
-        let requests;
+        console.log(
+            "Pending requests response:",
+            text
+        );
+
+        let requests = [];
 
         try {
             requests = JSON.parse(text);
-        } catch (error) {
-            throw new Error("Server returned invalid JSON");
-        }
-
-        if (!response.ok) {
+        } catch {
             throw new Error(
-                requests.message ||
-                "Failed to load blood requests"
+                "Backend returned invalid JSON."
             );
         }
 
-        if (!Array.isArray(requests) || requests.length === 0) {
+        if (!response.ok) {
 
-            container.innerHTML = `
-                <div class="empty">
-                    <h2>🎉 No Blood Requests</h2>
-                    <p>
-                        There are currently no patient blood requests.
-                    </p>
-                </div>
-            `;
-
-            return;
+            throw new Error(
+                requests.message ||
+                `Server error: ${response.status}`
+            );
         }
 
-
-        // Create requests grid
-
-        const requestsWrapper =
-            document.createElement("div");
-
-        requestsWrapper.className = "requests";
-
-
-        requests.forEach(request => {
-
-            const card =
-                document.createElement("div");
-
-            card.className = "request-card";
-
-
-            card.innerHTML = `
-
-                <h2>🧑 Patient Details</h2>
-
-                <div class="blood">
-                    🩸 ${request.blood_group || "N/A"}
-                </div>
-
-                <p>
-                    <strong>Patient Name:</strong>
-                    ${request.patient_name || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Age:</strong>
-                    ${request.age || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Gender:</strong>
-                    ${request.gender || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Blood Group:</strong>
-                    ${request.blood_group || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Required Units:</strong>
-                    ${request.units || "N/A"}
-                </p>
-
-                <p>
-                    <strong>City:</strong>
-                    ${request.city || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Phone:</strong>
-                    ${request.phone || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Reason:</strong>
-                    ${request.reason || "N/A"}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-
-                    <span class="status">
-                        ${request.status || "pending"}
-                    </span>
-                </p>
-
-<button onclick="approveRequest(${request.request_id})">
-    ✅ Approve
-</button>
-
-<button onclick="rejectRequest(${request.request_id})">
-    ❌ Reject
-</button>
-                ${
-                    request.status === "pending"
-                    ? `
-
-                    <div class="action-buttons">
-
-                        <button onclick="approveRequest(${request.request_id})">
-    ✅ Approve
-</button>
-
-
-                      <button onclick="rejectRequest(${request.request_id})">
-    ❌ Reject
-</button>
-
-                    </div>
-
-                    `
-                    : `
-                      
-                    `
-                }
-
-            `;
-
-            requestsWrapper.appendChild(card);
-
-        });
-
-
-        container.innerHTML = "";
-
-        container.appendChild(requestsWrapper);
-
+        displayRequests(requests);
 
     } catch (error) {
 
         console.error(
-            "LOAD REQUEST ERROR:",
+            "Load requests error:",
             error
         );
 
         container.innerHTML = `
+            <div class="error">
 
-            <div class="empty">
-
-                <h2>
-                    ❌ Cannot load blood requests.
-                </h2>
+                <h2>❌ Failed to fetch</h2>
 
                 <p>
                     ${error.message}
                 </p>
 
                 <p>
-                    Make sure your backend is running
+                    Make sure the Java backend is running
                     on port 5000.
                 </p>
 
             </div>
-
         `;
-
     }
-
 }
-async function loadRegistrations() {
+
+
+// ==========================================
+// DISPLAY REQUESTS
+// ==========================================
+
+function displayRequests(requests) {
 
     const container =
         document.getElementById("requestsContainer");
 
-    container.innerHTML = `
-        <div class="empty">
-            Loading registrations...
-        </div>
-    `;
+    if (!requests || requests.length === 0) {
 
-    try {
+        container.innerHTML = `
+            <div class="empty">
 
-        const response = await fetch(
-            "http://localhost:5000/api/registration/pending"
-        );
-
-        const text = await response.text();
-
-        console.log("Status:", response.status);
-        console.log("Response:", text);
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}: ${text}`
-            );
-
-        }
-
-        let registrations;
-
-        try {
-
-            registrations = JSON.parse(text);
-
-        } catch (jsonError) {
-
-            throw new Error(
-                "Backend did not return JSON. Check the API URL."
-            );
-
-        }
-
-        if (
-            !registrations ||
-            registrations.length === 0
-        ) {
-
-            container.innerHTML = `
-                <div class="empty">
-
-                    <h2>
-                        🎉 No Pending Registrations
-                    </h2>
-
-                    <p>
-                        There are no pending
-                        donor or hospital registrations.
-                    </p>
-
-                </div>
-            `;
-
-            return;
-        }
-
-        container.innerHTML = "";
-
-        registrations.forEach(registration => {
-
-            const card =
-                document.createElement("div");
-
-            card.className = "request-card";
-
-            const isHospital =
-                registration.role === "hospital";
-
-            const icon =
-                isHospital ? "🏥" : "🩸";
-
-            const type =
-                isHospital ? "Hospital" : "Donor";
-
-            card.innerHTML = `
-
-                <div class="icon">
-                    ${icon}
-                </div>
-
-                <h2>
-                    ${registration.name}
-                </h2>
-
-                <div class="type">
-                    ${type}
-                </div>
+                <h2>✅ No Pending Requests</h2>
 
                 <p>
-                    <strong>Email:</strong>
-                    ${registration.email}
+                    There are currently no blood requests
+                    waiting for approval.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    requests.forEach(request => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "request-card";
+
+
+        const hospital =
+            request.hospitalName ||
+            request.hospital ||
+            "Not provided";
+
+
+        const patient =
+            request.patientName ||
+            request.name ||
+            "Not provided";
+
+
+        const age =
+            request.age ??
+            "Not provided";
+
+
+        const gender =
+            request.gender ||
+            "Not provided";
+
+
+        const patientStatus =
+            request.patientStatus ||
+            request.priority ||
+            "Not provided";
+
+
+        const bloodGroup =
+            request.bloodGroup ||
+            "Not provided";
+
+
+        const units =
+            request.unitsRequired ??
+            "Not provided";
+
+
+        const phone =
+            request.phone ||
+            request.contactNumber ||
+            "Not provided";
+
+
+        const city =
+            request.city ||
+            "Not provided";
+
+
+        const reason =
+            request.reason ||
+            request.notes ||
+            "Not provided";
+
+
+        card.innerHTML = `
+
+            <div class="request-id">
+                Request ID: #${request.id}
+            </div>
+
+            <h2>
+                🏥 ${escapeHtml(hospital)}
+            </h2>
+
+            <div class="blood-group">
+                🩸 ${escapeHtml(bloodGroup)}
+            </div>
+
+            <div class="details">
+
+                <p>
+                    <strong>Patient:</strong>
+                    ${escapeHtml(patient)}
                 </p>
 
                 <p>
-                    <strong>Type:</strong>
-                    ${type}
+                    <strong>Age:</strong>
+                    ${escapeHtml(age)}
+                </p>
+
+                <p>
+                    <strong>Gender:</strong>
+                    ${escapeHtml(gender)}
+                </p>
+
+                <p>
+                    <strong>Patient Status:</strong>
+                    ${escapeHtml(patientStatus)}
+                </p>
+
+                <p>
+                    <strong>Blood Units:</strong>
+                    ${escapeHtml(units)}
+                </p>
+
+                <p>
+                    <strong>City:</strong>
+                    ${escapeHtml(city)}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    ${escapeHtml(phone)}
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    ${escapeHtml(reason)}
                 </p>
 
                 <p>
                     <strong>Status:</strong>
-
                     <span class="status">
-                        ${registration.status}
+                        ${escapeHtml(request.status || "Pending")}
                     </span>
-                </p>
-
-                <div class="buttons">
-
-                    <button
-                        class="approve"
-                        onclick="
-                            updateRegistration(
-                                ${registration.id},
-                                'approved'
-                            )
-                        ">
-
-                        ✓ Approve
-
-                    </button>
-
-                    <button
-                        class="reject"
-                        onclick="
-                            updateRegistration(
-                                ${registration.id},
-                                'rejected'
-                            )
-                        ">
-
-                        ✕ Reject
-
-                    </button>
-
-                </div>
-
-            `;
-
-            container.appendChild(card);
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "ERROR:",
-            error
-        );
-
-        container.innerHTML = `
-
-            <div class="empty">
-
-                <h2>
-                    ❌ Unable to Load Registrations
-                </h2>
-
-                <p>
-                    ${error.message}
                 </p>
 
             </div>
 
+            <div class="buttons">
+
+                <button
+                    class="approve"
+                    onclick="approveRequest(${request.id})">
+
+                    ✓ Approve
+
+                </button>
+
+                <button
+                    class="reject"
+                    onclick="rejectRequest(${request.id})">
+
+                    ✕ Reject
+
+                </button>
+
+            </div>
         `;
 
-    }
 
+        container.appendChild(card);
+
+    });
 }
-async function updateRequestStatus(requestId, status) {
 
-    try {
 
-        const response = await fetch(
-            `http://localhost:5000/api/requests/status/${requestId}`,
-            {
-                method: "PUT",
+// ==========================================
+// APPROVE REQUEST
+// ==========================================
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    status: status
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                data.message || "Failed to update request"
-            );
-        }
-
-        alert(data.message);
-
-        // Reload requests
-        loadRequests();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("❌ " + error.message);
-
-    }
-
-}
 async function approveRequest(id) {
 
-    console.log("Approving request ID:", id);
+    if (!confirm(
+        "Approve this blood request?"
+    )) {
+        return;
+    }
+
 
     try {
 
         const response = await fetch(
-            `http://localhost:5000/api/requests/status/${id}`,
+            `${API_URL}/approve/${id}`,
             {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    status: "approved"
-                })
+                method: "PUT"
             }
         );
 
-        console.log("Response status:", response.status);
 
-        const text = await response.text();
+        const text =
+            await response.text();
 
-        console.log("Server response:", text);
 
-        let data;
+        let result = {};
 
         try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error("Server did not return JSON:", text);
-
-            alert(
-                "Server returned an invalid response.\n\n" +
-                text.substring(0, 200)
-            );
-
-            return;
+            result = JSON.parse(text);
+        } catch {
+            result = {};
         }
+
 
         if (!response.ok) {
 
-            alert("❌ " + (data.message || "Failed to approve request"));
-
-            return;
+            throw new Error(
+                result.message ||
+                `Approval failed: ${response.status}`
+            );
         }
 
-        alert("✅ Blood request approved successfully");
+
+        alert(
+            result.message ||
+            "Blood request approved successfully!"
+        );
+
 
         loadRequests();
 
     } catch (error) {
 
-        console.error("APPROVE ERROR:", error);
+        console.error(
+            "Approve error:",
+            error
+        );
 
         alert(
-            "❌ Failed to approve request.\n\n" +
-            error.message
+            "❌ " + error.message
         );
     }
 }
+
+
+// ==========================================
+// REJECT REQUEST
+// ==========================================
+
 async function rejectRequest(id) {
 
-    console.log("Rejecting request ID:", id);
+    if (!confirm(
+        "Reject this blood request?"
+    )) {
+        return;
+    }
+
 
     try {
 
         const response = await fetch(
-            `http://localhost:5000/api/requests/status/${id}`,
+            `${API_URL}/reject/${id}`,
             {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    status: "rejected"
-                })
+                method: "PUT"
             }
         );
 
-        console.log("Response status:", response.status);
 
-        const text = await response.text();
+        const text =
+            await response.text();
 
-        console.log("Server response:", text);
 
-        let data;
+        let result = {};
 
         try {
-            data = JSON.parse(text);
-        } catch (e) {
-
-            console.error("Server did not return JSON:", text);
-
-            alert(
-                "Server returned an invalid response.\n\n" +
-                text.substring(0, 200)
-            );
-
-            return;
+            result = JSON.parse(text);
+        } catch {
+            result = {};
         }
+
 
         if (!response.ok) {
 
-            alert("❌ " + (data.message || "Failed to reject request"));
-
-            return;
+            throw new Error(
+                result.message ||
+                `Rejection failed: ${response.status}`
+            );
         }
 
-        alert("✅ Blood request rejected successfully");
+
+        alert(
+            result.message ||
+            "Blood request rejected successfully!"
+        );
+
 
         loadRequests();
 
     } catch (error) {
 
-        console.error("REJECT ERROR:", error);
+        console.error(
+            "Reject error:",
+            error
+        );
 
         alert(
-            "❌ Failed to reject request.\n\n" +
-            error.message
+            "❌ " + error.message
         );
     }
 }
-loadRequests();
+
+
+// ==========================================
+// BASIC HTML SAFETY
+// ==========================================
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+// ==========================================
+// LOAD PAGE
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadRequests
+);
 
 </script>
 
-
 </body>
-
 </html>

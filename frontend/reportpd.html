@@ -1,173 +1,284 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Blood Donation Reports</title>
+```
+<meta charset="UTF-8">
 
-    <style>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-        * {
-            box-sizing: border-box;
+<title>Blood Donation Reports</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        color: #333;
+    }
+
+    header {
+        background: linear-gradient(
+            135deg,
+            #b71c1c,
+            #e53935
+        );
+
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+
+    header p {
+        margin-bottom: 0;
+        font-size: 17px;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1400px;
+        margin: 30px auto;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        gap: 10px;
+    }
+
+    button {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        color: white;
+        font-size: 15px;
+    }
+
+    .back-btn {
+        background: #333;
+    }
+
+    .pdf-btn {
+        background: #c62828;
+    }
+
+    .refresh-btn {
+        background: #1976d2;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .summary {
+        display: grid;
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .summary-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+
+        box-shadow:
+            0 3px 12px
+            rgba(0,0,0,0.08);
+    }
+
+    .summary-card h3 {
+        margin: 0;
+        color: #b71c1c;
+        font-size: 17px;
+    }
+
+    .summary-card p {
+        font-size: 30px;
+        font-weight: bold;
+        margin: 10px 0 0;
+        color: #c62828;
+    }
+
+    .report {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+
+        box-shadow:
+            0 5px 20px
+            rgba(0,0,0,0.08);
+
+        margin-bottom: 30px;
+    }
+
+    .report h2 {
+        color: #b71c1c;
+
+        border-bottom:
+            2px solid #eee;
+
+        padding-bottom: 10px;
+    }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        min-width: 900px;
+
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th {
+        background: #c62828;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background: #fafafa;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+
+    .error {
+        color: #b91c1c;
+    }
+
+    .generated-date {
+        text-align: right;
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    @media(max-width: 900px) {
+
+        .summary {
+            grid-template-columns:
+                repeat(2, 1fr);
         }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            color: #333;
-        }
+    }
 
-        header {
-            background: linear-gradient(
-                135deg,
-                #b71c1c,
-                #e53935
-            );
+    @media(max-width: 600px) {
 
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 30px auto;
+        .summary {
+            grid-template-columns: 1fr;
         }
 
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            gap: 10px;
+            flex-direction: column;
+            align-items: stretch;
         }
 
+    }
+
+    @media print {
+
+        body {
+            background: white;
+        }
+
+        header {
+            background: white;
+            color: black;
+            border-bottom: 2px solid #333;
+        }
+
+        .top-bar,
         button {
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
+            display: none !important;
         }
 
-        .back-btn {
-            background: #333;
-        }
-
-        .pdf-btn {
-            background: #c62828;
+        .container {
+            width: 100%;
+            max-width: none;
+            margin: 0;
         }
 
         .report {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        }
-
-        .report h2 {
-            color: #b71c1c;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th {
-            background: #c62828;
-            color: white;
-            padding: 12px;
-            text-align: left;
-        }
-
-        td {
+            box-shadow: none;
+            border-radius: 0;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .empty {
-            text-align: center;
-            padding: 30px;
-            color: #777;
-        }
-
-        .summary {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(200px, 1fr));
-
-            gap: 15px;
-            margin-bottom: 30px;
         }
 
         .summary-card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            box-shadow: none;
+            border: 1px solid #ddd;
         }
 
-        .summary-card h3 {
-            margin: 0;
-            color: #b71c1c;
+        th {
+            background: #ddd !important;
+            color: black !important;
         }
 
-        .summary-card p {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0 0;
+        .generated-date {
+            color: black;
         }
 
-        @media print {
+    }
 
-            body {
-                background: white;
-            }
-
-            header {
-                background: white;
-                color: black;
-                border-bottom: 2px solid #333;
-            }
-
-            .top-bar,
-            button {
-                display: none;
-            }
-
-            .container {
-                width: 100%;
-                margin: 0;
-            }
-
-            .report {
-                box-shadow: none;
-                border-radius: 0;
-            }
-
-            th {
-                background: #ddd !important;
-                color: black !important;
-            }
-
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
@@ -175,23 +286,43 @@
 
 <header>
 
-    <h1>🩸 Blood Donation Management Report</h1>
+```
+<h1>
+    🩸 Blood Donation Management Report
+</h1>
 
-    <p>Donors and Blood Requestors Report</p>
+<p>
+    Donors and Hospital Blood Requests
+</p>
+```
 
 </header>
 
-
 <div class="container">
 
+```
+<!-- ================================= -->
+<!-- TOP BAR -->
+<!-- ================================= -->
 
-    <div class="top-bar">
+<div class="top-bar">
+
+    <button
+        class="back-btn"
+        onclick="goBack()">
+
+        ← Back to Admin
+
+    </button>
+
+
+    <div>
 
         <button
-            class="back-btn"
-            onclick="goBack()">
+            class="refresh-btn"
+            onclick="loadReport()">
 
-            ← Back to Admin
+            🔄 Refresh
 
         </button>
 
@@ -206,91 +337,72 @@
 
     </div>
 
-
-    <!-- SUMMARY -->
-
-    <div class="summary">
-
-        <div class="summary-card">
-
-            <h3>Total Donors</h3>
-
-            <p id="donorCount">
-                0
-            </p>
-
-        </div>
+</div>
 
 
-        <div class="summary-card">
+<div class="generated-date">
 
-            <h3>Approved Donors</h3>
+    Report generated:
+    <span id="reportDate"></span>
 
-            <p id="approvedDonorCount">
-                0
-            </p>
-
-        </div>
+</div>
 
 
-        <div class="summary-card">
+<!-- ================================= -->
+<!-- SUMMARY -->
+<!-- ================================= -->
 
-            <h3>Total Blood Requests</h3>
-
-            <p id="requestCount">
-                0
-            </p>
-
-        </div>
+<div class="summary">
 
 
-        <div class="summary-card">
+    <div class="summary-card">
 
-            <h3>Approved Requests</h3>
+        <h3>
+            🩸 Approved Donors
+        </h3>
 
-            <p id="approvedRequestCount">
-                0
-            </p>
-
-        </div>
+        <p id="donorCount">
+            0
+        </p>
 
     </div>
 
 
-    <!-- DONOR REPORT -->
+    <div class="summary-card">
 
-    <div class="report">
+        <h3>
+            📋 Total Blood Requests
+        </h3>
 
-        <h2>
-            🩸 Donor Report
-        </h2>
-
-        <div id="donorReport">
-
-            <div class="empty">
-                Loading donors...
-            </div>
-
-        </div>
+        <p id="requestCount">
+            0
+        </p>
 
     </div>
 
 
-    <!-- BLOOD REQUEST REPORT -->
+    <div class="summary-card">
 
-    <div class="report">
+        <h3>
+            ✅ Approved Requests
+        </h3>
 
-        <h2>
-            🏥 Blood Request Report
-        </h2>
+        <p id="approvedRequestCount">
+            0
+        </p>
 
-        <div id="requestReport">
+    </div>
 
-            <div class="empty">
-                Loading blood requests...
-            </div>
 
-        </div>
+    <div class="summary-card">
+
+        <h3>
+            ⏳ Pending Requests
+        </h3>
+
+        <p id="pendingRequestCount">
+            0
+        </p>
 
     </div>
 
@@ -298,23 +410,82 @@
 </div>
 
 
+<!-- ================================= -->
+<!-- DONOR REPORT -->
+<!-- ================================= -->
+
+<div class="report">
+
+    <h2>
+        🩸 Approved Donor Report
+    </h2>
+
+
+    <div id="donorReport">
+
+        <div class="empty">
+
+            Loading donors...
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- BLOOD REQUEST REPORT -->
+<!-- ================================= -->
+
+<div class="report">
+
+    <h2>
+        🏥 Blood Request Report
+    </h2>
+
+
+    <div id="requestReport">
+
+        <div class="empty">
+
+            Loading blood requests...
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 <script>
 
 
-// ==========================================
-// BACK
-// ==========================================
+// =====================================================
+// API
+// =====================================================
+
+const API_BASE =
+    "http://localhost:5000";
+
+
+// =====================================================
+// BACK TO ADMIN
+// =====================================================
 
 function goBack() {
 
-    window.location.href = "admin.html";
+    window.location.href =
+        "admin.html";
 
 }
 
 
-// ==========================================
-// DOWNLOAD PDF
-// ==========================================
+// =====================================================
+// DOWNLOAD / PRINT PDF
+// =====================================================
 
 function downloadPDF() {
 
@@ -323,39 +494,294 @@ function downloadPDF() {
 }
 
 
-// ==========================================
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHtml(value) {
+
+    if (value === null ||
+        value === undefined) {
+
+        return "-";
+
+    }
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+// =====================================================
+// STATUS CLASS
+// =====================================================
+
+function getStatusClass(status) {
+
+    if (!status) {
+
+        return "pending";
+
+    }
+
+    const value =
+        String(status).toLowerCase();
+
+    if (value === "approved") {
+
+        return "approved";
+
+    }
+
+    if (value === "rejected") {
+
+        return "rejected";
+
+    }
+
+    return "pending";
+
+}
+
+
+// =====================================================
 // LOAD REPORT
-// ==========================================
+// =====================================================
 
 async function loadReport() {
 
+    const donorReport =
+        document.getElementById(
+            "donorReport"
+        );
+
+    const requestReport =
+        document.getElementById(
+            "requestReport"
+        );
+
+
+    donorReport.innerHTML = `
+
+        <div class="empty">
+            Loading donors...
+        </div>
+
+    `;
+
+
+    requestReport.innerHTML = `
+
+        <div class="empty">
+            Loading blood requests...
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "reportDate"
+    ).innerText =
+        new Date().toLocaleString();
+
+
     try {
 
-        // ===============================
-        // LOAD DONORS
-        // ===============================
+
+        // =================================================
+        // LOAD APPROVED DONORS
+        // =================================================
 
         const donorResponse =
             await fetch(
-                "http://localhost:5000/api/donors/approved"
+                `${API_BASE}/api/donors/approved`
             );
+
+
+        if (!donorResponse.ok) {
+
+            throw new Error(
+                "Failed to load approved donors. HTTP " +
+                donorResponse.status
+            );
+
+        }
 
 
         const donors =
             await donorResponse.json();
 
 
+        console.log(
+            "Approved donors:",
+            donors
+        );
+
+
         document.getElementById(
             "donorCount"
-        ).innerText = donors.length;
+        ).innerText =
+            donors.length;
+
+
+        displayDonors(donors);
+
+
+        // =================================================
+        // LOAD ALL BLOOD REQUESTS
+        // =================================================
+
+        const requestResponse =
+            await fetch(
+                `${API_BASE}/api/blood-requests/all`
+            );
+
+
+        if (!requestResponse.ok) {
+
+            throw new Error(
+                "Failed to load blood requests. HTTP " +
+                requestResponse.status
+            );
+
+        }
+
+
+        const requests =
+            await requestResponse.json();
+
+
+        console.log(
+            "All blood requests:",
+            requests
+        );
+
+
+        // =================================================
+        // COUNTS
+        // =================================================
+
+        const approvedRequests =
+            requests.filter(
+                request =>
+                    String(
+                        request.status || ""
+                    ).toLowerCase() ===
+                    "approved"
+            );
+
+
+        const pendingRequests =
+            requests.filter(
+                request =>
+                    String(
+                        request.status || ""
+                    ).toLowerCase() ===
+                    "pending"
+            );
 
 
         document.getElementById(
-            "approvedDonorCount"
-        ).innerText = donors.length;
+            "requestCount"
+        ).innerText =
+            requests.length;
 
 
-        let donorHTML = `
+        document.getElementById(
+            "approvedRequestCount"
+        ).innerText =
+            approvedRequests.length;
+
+
+        document.getElementById(
+            "pendingRequestCount"
+        ).innerText =
+            pendingRequests.length;
+
+
+        displayRequests(requests);
+
+
+    } catch (error) {
+
+
+        console.error(
+            "REPORT ERROR:",
+            error
+        );
+
+
+        donorReport.innerHTML = `
+
+            <div class="empty error">
+
+                ❌ Failed to load donor report.
+
+                <br><br>
+
+                ${escapeHtml(error.message)}
+
+            </div>
+
+        `;
+
+
+        requestReport.innerHTML = `
+
+            <div class="empty error">
+
+                ❌ Failed to load blood request report.
+
+                <br><br>
+
+                ${escapeHtml(error.message)}
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// DISPLAY DONORS
+// =====================================================
+
+function displayDonors(donors) {
+
+    const container =
+        document.getElementById(
+            "donorReport"
+        );
+
+
+    if (!donors ||
+        donors.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                🩸 No approved donors found.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <div class="table-container">
 
             <table>
 
@@ -378,99 +804,145 @@ async function loadReport() {
 
                 <tbody>
 
-        `;
+    `;
 
 
-        donors.forEach((donor, index) => {
+    donors.forEach(
+        (donor, index) => {
 
-            donorHTML += `
+            const name =
+                donor.name ||
+                donor.donorName ||
+                "-";
+
+
+            const email =
+                donor.email ||
+                "-";
+
+
+            const bloodGroup =
+                donor.bloodGroup ||
+                donor.blood_group ||
+                "-";
+
+
+            const age =
+                donor.age ??
+                "-";
+
+
+            const gender =
+                donor.gender ||
+                "-";
+
+
+            const city =
+                donor.city ||
+                "-";
+
+
+            const phone =
+                donor.phone ||
+                donor.contactNumber ||
+                donor.contact_number ||
+                "-";
+
+
+            html += `
 
                 <tr>
 
-                    <td>${index + 1}</td>
+                    <td>
+                        ${index + 1}
+                    </td>
 
-                    <td>${donor.name || "-"}</td>
+                    <td>
+                        ${escapeHtml(name)}
+                    </td>
 
-                    <td>${donor.email || "-"}</td>
+                    <td>
+                        ${escapeHtml(email)}
+                    </td>
 
-                    <td>${donor.blood_group || "-"}</td>
+                    <td>
+                        ${escapeHtml(bloodGroup)}
+                    </td>
 
-                    <td>${donor.age || "-"}</td>
+                    <td>
+                        ${escapeHtml(age)}
+                    </td>
 
-                    <td>${donor.gender || "-"}</td>
+                    <td>
+                        ${escapeHtml(gender)}
+                    </td>
 
-                    <td>${donor.city || "-"}</td>
+                    <td>
+                        ${escapeHtml(city)}
+                    </td>
 
-                    <td>${donor.phone || "-"}</td>
+                    <td>
+                        ${escapeHtml(phone)}
+                    </td>
 
                 </tr>
 
             `;
 
-        });
+        }
+    );
 
 
-        donorHTML += `
+    html += `
 
                 </tbody>
 
             </table>
 
+        </div>
+
+    `;
+
+
+    container.innerHTML =
+        html;
+
+}
+
+
+// =====================================================
+// DISPLAY BLOOD REQUESTS
+// =====================================================
+
+function displayRequests(requests) {
+
+    const container =
+        document.getElementById(
+            "requestReport"
+        );
+
+
+    if (!requests ||
+        requests.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                📋 No blood requests found.
+
+            </div>
+
         `;
 
+        return;
 
-        if (donors.length === 0) {
-
-            donorHTML = `
-
-                <div class="empty">
-                    No approved donors found.
-                </div>
-
-            `;
-
-        }
+    }
 
 
-        document.getElementById(
-            "donorReport"
-        ).innerHTML = donorHTML;
+    let html = `
 
-
-        // ===============================
-        // LOAD BLOOD REQUESTS
-        // ===============================
-
-        const requestResponse =
-            await fetch(
-                "http://localhost:5000/api/requests/all"
-            );
-
-
-        const requests =
-            await requestResponse.json();
-
-
-        document.getElementById(
-            "requestCount"
-        ).innerText = requests.length;
-
-
-        const approvedRequests =
-            requests.filter(
-                request =>
-                    request.status &&
-                    request.status.toLowerCase() === "approved"
-            );
-
-
-        document.getElementById(
-            "approvedRequestCount"
-        ).innerText =
-            approvedRequests.length;
-
-
-        let requestHTML = `
+        <div class="table-container">
 
             <table>
 
@@ -478,13 +950,17 @@ async function loadReport() {
 
                     <tr>
 
-                        <th>#</th>
+                        <th>ID</th>
                         <th>Hospital</th>
                         <th>Patient</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Patient Status</th>
                         <th>Blood Group</th>
                         <th>Units</th>
                         <th>City</th>
                         <th>Phone</th>
+                        <th>Reason</th>
                         <th>Status</th>
 
                     </tr>
@@ -493,118 +969,179 @@ async function loadReport() {
 
                 <tbody>
 
-        `;
+    `;
 
 
-        requests.forEach((request, index) => {
+    requests.forEach(
+        request => {
 
-            requestHTML += `
+
+            // -----------------------------------------
+            // CURRENT SPRING BOOT FIELD NAMES
+            // -----------------------------------------
+
+            const id =
+                request.id ??
+                "-";
+
+
+            const hospital =
+                request.hospitalName ||
+                request.hospital ||
+                "-";
+
+
+            const patient =
+                request.patientName ||
+                request.name ||
+                "-";
+
+
+            const age =
+                request.age ??
+                "-";
+
+
+            const gender =
+                request.gender ||
+                "-";
+
+
+            const patientStatus =
+                request.patientStatus ||
+                request.priority ||
+                "-";
+
+
+            const bloodGroup =
+                request.bloodGroup ||
+                request.blood_group ||
+                "-";
+
+
+            const units =
+                request.unitsRequired ??
+                request.units ??
+                "-";
+
+
+            const city =
+                request.city ||
+                "-";
+
+
+            const phone =
+                request.phone ||
+                request.contactNumber ||
+                request.contact_number ||
+                "-";
+
+
+            const reason =
+                request.reason ||
+                request.notes ||
+                "-";
+
+
+            const status =
+                request.status ||
+                "Pending";
+
+
+            html += `
 
                 <tr>
 
-                    <td>${index + 1}</td>
-
                     <td>
-                        ${request.hospital_name || "-"}
+                        #${escapeHtml(id)}
                     </td>
 
                     <td>
-                        ${request.patient_name || "-"}
+                        ${escapeHtml(hospital)}
                     </td>
 
                     <td>
-                        ${request.blood_group || "-"}
+                        ${escapeHtml(patient)}
                     </td>
 
                     <td>
-                        ${request.units || "-"}
+                        ${escapeHtml(age)}
                     </td>
 
                     <td>
-                        ${request.city || "-"}
+                        ${escapeHtml(gender)}
                     </td>
 
                     <td>
-                        ${request.phone || "-"}
+                        ${escapeHtml(patientStatus)}
                     </td>
 
                     <td>
-                        ${request.status || "Pending"}
+                        🩸
+                        ${escapeHtml(bloodGroup)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(units)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(city)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(phone)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(reason)}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="status
+                            ${getStatusClass(status)}">
+
+                            ${escapeHtml(status)}
+
+                        </span>
+
                     </td>
 
                 </tr>
 
             `;
 
-        });
+        }
+    );
 
 
-        requestHTML += `
+    html += `
 
                 </tbody>
 
             </table>
 
-        `;
+        </div>
+
+    `;
 
 
-        if (requests.length === 0) {
-
-            requestHTML = `
-
-                <div class="empty">
-                    No blood requests found.
-                </div>
-
-            `;
-
-        }
-
-
-        document.getElementById(
-            "requestReport"
-        ).innerHTML = requestHTML;
-
-
-    } catch (error) {
-
-        console.error(
-            "REPORT ERROR:",
-            error
-        );
-
-
-        document.getElementById(
-            "donorReport"
-        ).innerHTML = `
-
-            <div class="empty">
-                ❌ Failed to load donor report.
-            </div>
-
-        `;
-
-
-        document.getElementById(
-            "requestReport"
-        ).innerHTML = `
-
-            <div class="empty">
-                ❌ Failed to load blood request report.
-            </div>
-
-        `;
-
-    }
+    container.innerHTML =
+        html;
 
 }
 
 
-// ==========================================
-// START
-// ==========================================
+// =====================================================
+// START REPORT
+// =====================================================
 
-loadReport();
+document.addEventListener(
+    "DOMContentLoaded",
+    loadReport
+);
 
 
 </script>
