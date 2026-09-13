@@ -95,90 +95,53 @@ document
 
     event.preventDefault();
 
-    const message =
-        document.getElementById("donorMessage");
+    const message = document.getElementById("donorMessage");
 
     message.innerText = "Submitting registration...";
     message.style.color = "#333";
 
     const donorData = {
-
-        name:
-            document.getElementById("name").value.trim(),
-
-        email:
-            document.getElementById("email").value.trim(),
-
-        age:
-            document.getElementById("age").value,
-
-        gender:
-            document.getElementById("gender").value,
-
-        bloodGroup:
-            document.getElementById("blood_group").value,
-
-        city:
-            document.getElementById("city").value,
-
-        phone:
-            document.getElementById("phone").value.trim()
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        age: document.getElementById("age").value,
+        gender: document.getElementById("gender").value,
+        bloodGroup: document.getElementById("blood_group").value,
+        city: document.getElementById("city").value,
+        phone: document.getElementById("phone").value.trim()
     };
 
     console.log("Sending donor data:", donorData);
 
     try {
-
+        // UPDATED LIVE BACKEND URL (HTTPS)
         const response = await fetch(
-            "http://localhost:5000/api/donors/register",
+            "https://blood-donation-management-system-1-61sk.onrender.com/api/donors/register",
             {
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify(donorData)
             }
         );
 
         const data = await response.json();
-
         console.log("Server response:", data);
 
         if (response.ok) {
-
-            message.innerText =
-                data.message ||
-                "Donor registration submitted successfully.";
-
+            message.innerText = data.message || "Donor registration submitted successfully.";
             message.style.color = "green";
-
-            document
-                .getElementById("donorRegistrationForm")
-                .reset();
-
+            document.getElementById("donorRegistrationForm").reset();
         } else {
-
-            message.innerText =
-                data.message ||
-                "Donor registration failed.";
-
+            message.innerText = data.message || "Donor registration failed.";
             message.style.color = "red";
         }
-
     } catch (error) {
-
         console.error("Registration error:", error);
-
-        message.innerText =
-            "Cannot connect to server. Please make sure the backend is running.";
-
+        message.innerText = "Cannot connect to server. Please make sure the backend is running.";
         message.style.color = "red";
     }
-
 });
-
 </script>
 </body>
 </html>
