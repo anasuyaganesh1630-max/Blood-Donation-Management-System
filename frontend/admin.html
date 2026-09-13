@@ -1,929 +1,1853 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>Admin Dashboard</title>
+<title>BloodCare | Admin Dashboard</title>
 
 <style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",Arial,sans-serif;
+}
 
-    * {
-        box-sizing: border-box;
+body{
+    min-height:100vh;
+    background:#f8f9fd;
+    color:#172033;
+    overflow-x:hidden;
+}
+
+/* =========================================
+   ANIMATED BACKGROUND
+========================================= */
+
+body::before,
+body::after{
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:.18;
+    z-index:-1;
+    animation:float 8s ease-in-out infinite alternate;
+}
+
+body::before{
+    background:#ff3b5c;
+    top:-180px;
+    right:-100px;
+}
+
+body::after{
+    background:#a60012;
+    bottom:-200px;
+    left:-150px;
+    animation-delay:2s;
+}
+
+@keyframes float{
+    from{
+        transform:translate(0,0) scale(1);
     }
-
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f9;
-        color: #333;
+    to{
+        transform:translate(40px,30px) scale(1.15);
     }
+}
 
-    header {
-        background: linear-gradient(
-            135deg,
-            #b71c1c,
-            #e53935
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar{
+    width:260px;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    z-index:1000;
+
+    padding:25px 17px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #8e0009 0%,
+            #c40819 45%,
+            #e31c32 100%
         );
 
-        color: white;
-        padding: 25px 40px;
+    color:white;
 
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+    box-shadow:
+        8px 0 35px rgba(80,0,10,.18);
 
-    header h1 {
-        margin: 0;
-    }
-
-    .admin-info {
-        text-align: right;
-    }
-
-    .container {
-        width: 90%;
-        max-width: 1200px;
-        margin: 30px auto;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-
-    .stat-card {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-
-        box-shadow:
-            0 5px 20px rgba(0,0,0,0.08);
-
-        text-align: center;
-    }
-
-    .stat-card h3 {
-        margin: 0 0 10px;
-        color: #555;
-    }
-
-    .stat-number {
-        font-size: 35px;
-        font-weight: bold;
-        color: #c62828;
-    }
-
-    .section-title {
-        margin-bottom: 20px;
-    }
-
-    .buttons {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-
-    button {
-        padding: 25px;
-        border: none;
-        border-radius: 12px;
-
-        background: #d32f2f;
-        color: white;
-
-        font-size: 17px;
-        cursor: pointer;
-
-        transition: 0.2s;
-    }
-
-    button:hover {
-        background: #b71c1c;
-        transform: translateY(-2px);
-    }
-
-    .logout {
-        background: #333;
-    }
-
-    .logout:hover {
-        background: #111;
-    }
-
-    .emergency {
-        margin-top: 35px;
-
-        background: #fff;
-
-        border-left: 6px solid #d32f2f;
-
-        border-radius: 12px;
-
-        padding: 25px;
-
-        box-shadow:
-            0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .emergency h2 {
-        margin-top: 0;
-        color: #b71c1c;
-    }
-
-    .quick {
-        margin-top: 30px;
-
-        background: white;
-
-        padding: 25px;
-
-        border-radius: 15px;
-
-        box-shadow:
-            0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .quick button {
-        padding: 15px 20px;
-
-        margin-right: 10px;
-        margin-bottom: 10px;
-
-        font-size: 15px;
-    }
-
-    @media(max-width:900px) {
-
-        .stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .buttons {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-    }
-
-    @media(max-width:600px) {
-
-        .stats,
-        .buttons {
-            grid-template-columns: 1fr;
-        }
-
-        header {
-            flex-direction: column;
-            text-align: center;
-            gap: 10px;
-        }
-
-        .admin-info {
-            text-align: center;
-        }
-
-    }
-    .compatibility-btn {
-    background: #7c3aed;
+    overflow-y:auto;
 }
 
-.compatibility-btn:hover {
-    background: #6d28d9;
-}
-.compatibility-btn {
-    background: #7c3aed;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: bold;
+/* floating glow */
+
+.sidebar::before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    top:80px;
+    left:-80px;
+    animation:sideFloat 6s ease-in-out infinite;
 }
 
-.compatibility-btn:hover {
-    background: #6d28d9;
-}
-.top-nav {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.top-nav button {
-    background: #333;
-    color: white;
-    border: none;
-    padding: 7px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
+@keyframes sideFloat{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(35px);
+    }
 }
 
-.top-nav button:hover {
-    background: #555;
+/* =========================================
+   BRAND
+========================================= */
+
+.brand{
+    position:relative;
+    z-index:2;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:5px 8px 25px;
+
+    border-bottom:1px solid rgba(255,255,255,.2);
 }
+
+.logo{
+    width:48px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:white;
+    color:#d7192b;
+
+    border-radius:15px;
+
+    font-size:25px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.18);
+
+    animation:pulseLogo 3s infinite;
+}
+
+@keyframes pulseLogo{
+    0%,100%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.07);
+    }
+}
+
+.brand h2{
+    font-size:20px;
+}
+
+.brand small{
+    display:block;
+    margin-top:3px;
+    opacity:.75;
+    font-size:11px;
+}
+
+/* =========================================
+   MENU
+========================================= */
+
+.menu-title{
+    position:relative;
+    z-index:2;
+
+    margin:25px 12px 9px;
+
+    font-size:10px;
+    letter-spacing:1.5px;
+    font-weight:bold;
+
+    opacity:.6;
+}
+
+.menu-btn{
+    position:relative;
+    z-index:2;
+
+    width:100%;
+
+    display:flex;
+    align-items:center;
+
+    gap:13px;
+
+    border:0;
+    background:transparent;
+
+    color:white;
+
+    padding:13px 14px;
+
+    margin:4px 0;
+
+    border-radius:12px;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    transition:
+        transform .25s,
+        background .25s,
+        box-shadow .25s;
+}
+
+.menu-btn:hover{
+    background:rgba(255,255,255,.14);
+    transform:translateX(5px);
+}
+
+.menu-btn.active{
+    background:white;
+    color:#c30c1d;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.18);
+}
+
+.menu-icon{
+    width:24px;
+    text-align:center;
+    font-size:17px;
+}
+
+.notification-row{
+    justify-content:space-between;
+}
+
+.notification-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.badge{
+    min-width:22px;
+    height:22px;
+
+    padding:0 6px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#ffd43b;
+    color:#7c1d1d;
+
+    font-size:10px;
+    font-weight:bold;
+
+    animation:badgePulse 1.8s infinite;
+}
+
+@keyframes badgePulse{
+    0%,100%{
+        box-shadow:0 0 0 0 rgba(255,212,59,.5);
+    }
+    50%{
+        box-shadow:0 0 0 7px rgba(255,212,59,0);
+    }
+}
+
+.logout{
+    margin-top:25px;
+
+    border-top:1px solid rgba(255,255,255,.18);
+
+    padding-top:18px;
+}
+
+/* =========================================
+   MAIN
+========================================= */
+
+.main{
+    margin-left:260px;
+    width:calc(100% - 260px);
+}
+
+/* =========================================
+   TOP BAR
+========================================= */
+
+.topbar{
+    height:88px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 38px;
+
+    background:rgba(255,255,255,.82);
+
+    backdrop-filter:blur(15px);
+
+    border-bottom:1px solid rgba(220,224,235,.8);
+
+    animation:slideDown .7s ease;
+}
+
+@keyframes slideDown{
+    from{
+        opacity:0;
+        transform:translateY(-25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.welcome h1{
+    font-size:25px;
+    font-weight:700;
+}
+
+.welcome p{
+    margin-top:5px;
+    color:#8a92a3;
+    font-size:13px;
+}
+
+.admin{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.avatar{
+    width:45px;
+    height:45px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(135deg,#ffe1e5,#fff);
+
+    color:#c7192b;
+
+    font-size:19px;
+
+    box-shadow:
+        0 7px 20px rgba(199,25,43,.12);
+}
+
+.admin strong{
+    display:block;
+    font-size:14px;
+}
+
+.admin span{
+    color:#9097a7;
+    font-size:11px;
+}
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.content{
+    padding:32px 38px 50px;
+}
+
+.heading{
+    margin-bottom:24px;
+
+    animation:fadeUp .7s ease;
+}
+
+.heading h2{
+    font-size:22px;
+}
+
+.heading p{
+    margin-top:5px;
+    color:#8991a3;
+    font-size:13px;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================================
+   STATISTICS
+========================================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+
+    margin-bottom:35px;
+}
+
+.stat{
+    position:relative;
+    overflow:hidden;
+
+    background:rgba(255,255,255,.9);
+
+    border:1px solid #edf0f5;
+
+    border-radius:20px;
+
+    padding:22px;
+
+    display:flex;
+    align-items:center;
+    gap:16px;
+
+    box-shadow:
+        0 12px 35px rgba(34,45,70,.07);
+
+    animation:
+        cardAppear .7s ease backwards;
+
+    transition:
+        transform .3s,
+        box-shadow .3s;
+}
+
+.stat:nth-child(1){
+    animation-delay:.1s;
+}
+
+.stat:nth-child(2){
+    animation-delay:.2s;
+}
+
+.stat:nth-child(3){
+    animation-delay:.3s;
+}
+
+.stat:nth-child(4){
+    animation-delay:.4s;
+}
+
+@keyframes cardAppear{
+    from{
+        opacity:0;
+        transform:translateY(35px) scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+.stat:hover{
+    transform:translateY(-7px);
+    box-shadow:
+        0 18px 40px rgba(34,45,70,.12);
+}
+
+.stat::after{
+    content:"";
+    position:absolute;
+
+    width:100px;
+    height:100px;
+
+    border-radius:50%;
+
+    right:-45px;
+    top:-45px;
+
+    background:#fff2f3;
+}
+
+.stat-icon{
+    position:relative;
+    z-index:2;
+
+    width:58px;
+    height:58px;
+
+    flex-shrink:0;
+
+    border-radius:17px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+
+    animation:iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-4px);
+    }
+}
+
+.red{
+    background:#ffe7ea;
+}
+
+.green{
+    background:#e3f9ed;
+}
+
+.blue{
+    background:#e7f1ff;
+}
+
+.orange{
+    background:#fff1dc;
+}
+
+.stat-info{
+    position:relative;
+    z-index:2;
+}
+
+.stat-info p{
+    color:#8b93a5;
+    font-size:12px;
+    margin-bottom:6px;
+}
+
+.stat-info h3{
+    font-size:29px;
+}
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:16px;
+}
+
+.section-title h2{
+    font-size:19px;
+}
+
+.section-title span{
+    color:#969eae;
+    font-size:11px;
+}
+
+/* =========================================
+   MANAGEMENT
+========================================= */
+
+.management{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+
+    margin-bottom:32px;
+}
+
+.manage-card{
+    position:relative;
+    overflow:hidden;
+
+    background:white;
+
+    border:1px solid #edf0f5;
+
+    border-radius:19px;
+
+    padding:23px;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 28px rgba(30,40,65,.05);
+
+    transition:
+        transform .3s,
+        box-shadow .3s,
+        border .3s;
+
+    animation:fadeUp .8s ease backwards;
+}
+
+.manage-card:nth-child(1){animation-delay:.15s;}
+.manage-card:nth-child(2){animation-delay:.2s;}
+.manage-card:nth-child(3){animation-delay:.25s;}
+.manage-card:nth-child(4){animation-delay:.3s;}
+.manage-card:nth-child(5){animation-delay:.35s;}
+.manage-card:nth-child(6){animation-delay:.4s;}
+
+.manage-card:hover{
+    transform:
+        translateY(-8px)
+        scale(1.01);
+
+    border-color:#f0b8be;
+
+    box-shadow:
+        0 20px 40px rgba(180,20,40,.10);
+}
+
+.manage-card::before{
+    content:"";
+
+    position:absolute;
+
+    width:110px;
+    height:110px;
+
+    border-radius:50%;
+
+    right:-50px;
+    top:-50px;
+
+    background:#fff2f3;
+
+    transition:.4s;
+}
+
+.manage-card:hover::before{
+    transform:scale(1.5);
+}
+
+.manage-icon{
+    position:relative;
+    z-index:2;
+
+    width:48px;
+    height:48px;
+
+    border-radius:14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#fff0f2;
+
+    color:#ca1628;
+
+    font-size:21px;
+
+    margin-bottom:16px;
+
+    transition:.3s;
+}
+
+.manage-card:hover .manage-icon{
+    transform:rotate(-8deg) scale(1.1);
+}
+
+.manage-card h3{
+    font-size:16px;
+    margin-bottom:7px;
+}
+
+.manage-card p{
+    color:#8b93a4;
+    font-size:12px;
+    line-height:1.55;
+}
+
+.open{
+    margin-top:16px;
+
+    color:#c7192c;
+
+    font-size:11px;
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.manage-card:hover .open{
+    transform:translateX(5px);
+}
+
+/* =========================================
+   BOTTOM PANELS
+========================================= */
+
+.bottom{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:20px;
+}
+
+.panel{
+    background:white;
+
+    border:1px solid #edf0f5;
+
+    border-radius:19px;
+
+    padding:23px;
+
+    box-shadow:
+        0 8px 28px rgba(30,40,65,.05);
+
+    animation:fadeUp 1s ease;
+}
+
+.quick{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.quick button{
+    border:1px solid #edf0f5;
+
+    background:#fafbfc;
+
+    border-radius:13px;
+
+    padding:16px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.quick button:hover{
+    background:#fff5f6;
+
+    border-color:#edc0c5;
+
+    transform:translateY(-3px);
+}
+
+.quick strong{
+    display:block;
+    font-size:13px;
+}
+
+.quick span{
+    display:block;
+    margin-top:5px;
+
+    color:#9299a8;
+    font-size:10px;
+}
+
+/* =========================================
+   SYSTEM STATUS
+========================================= */
+
+.status{
+    display:flex;
+    flex-direction:column;
+}
+
+.status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #f0f1f4;
+
+    font-size:13px;
+}
+
+.status-row:last-child{
+    border-bottom:none;
+}
+
+.status-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.dot{
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:#20b86a;
+
+    box-shadow:
+        0 0 0 4px #e7f8ee;
+
+    animation:statusPulse 2s infinite;
+}
+
+@keyframes statusPulse{
+    0%,100%{
+        box-shadow:0 0 0 3px #e7f8ee;
+    }
+    50%{
+        box-shadow:0 0 0 7px rgba(32,184,106,.08);
+    }
+}
+
+.online{
+    color:#20a65f;
+
+    font-size:10px;
+    font-weight:bold;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:1100px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .management{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .bottom{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:800px){
+
+    .sidebar{
+        width:72px;
+        padding:20px 9px;
+    }
+
+    .brand{
+        justify-content:center;
+        padding-left:0;
+        padding-right:0;
+    }
+
+    .brand-text,
+    .menu-title,
+    .menu-btn span:not(.menu-icon),
+    .notification-left span:last-child{
+        display:none;
+    }
+
+    .menu-btn{
+        justify-content:center;
+        padding:14px 5px;
+    }
+
+    .menu-icon{
+        font-size:19px;
+    }
+
+    .badge{
+        display:none;
+    }
+
+    .main{
+        margin-left:72px;
+        width:calc(100% - 72px);
+    }
+
+    .topbar{
+        padding:0 20px;
+    }
+
+    .content{
+        padding:25px 20px;
+    }
+}
+
+@media(max-width:600px){
+
+    .stats,
+    .management{
+        grid-template-columns:1fr;
+    }
+
+    .quick{
+        grid-template-columns:1fr;
+    }
+
+    .welcome h1{
+        font-size:20px;
+    }
+
+    .admin div:last-child{
+        display:none;
+    }
+}
+
 </style>
-
 </head>
 
+
 <body>
-<div class="top-nav">
-    <button onclick="goBack()">
-        ← Back
+
+<div class="dashboard">
+
+<!-- ======================================
+     SIDEBAR
+====================================== -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="logo">
+            🩸
+        </div>
+
+        <div class="brand-text">
+
+            <h2>BloodCare</h2>
+
+            <small>
+                Management System
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        MAIN
+    </div>
+
+    <button class="menu-btn active"
+            onclick="goDashboard()">
+
+        <span class="menu-icon">🏠</span>
+        <span>Dashboard</span>
+
     </button>
-</div>
-<header>
 
-<div>
 
-    <h1>
-        🛡️ Admin Dashboard
-    </h1>
+    <div class="menu-title">
+        MANAGEMENT
+    </div>
 
-    <p>
-        Blood Donation Management System
-    </p>
+    <button class="menu-btn"
+            onclick="registrationRequests()">
 
-</div>
+        <span class="menu-icon">📋</span>
+        <span>Donor Requests</span>
 
-<div class="admin-info">
+    </button>
 
-    👤 Administrator
 
-    <br>
+    <button class="menu-btn"
+            onclick="donors()">
 
-    <small>
-        System Control Panel
-    </small>
+        <span class="menu-icon">🩸</span>
+        <span>Approved Donors</span>
 
-</div>
+    </button>
+
+
+    <button class="menu-btn"
+            onclick="approvedHospitals()">
+
+        <span class="menu-icon">🏥</span>
+        <span>Hospitals</span>
+
+    </button>
+
+
+    <button class="menu-btn"
+            onclick="patientRequests()">
+
+        <span class="menu-icon">👨‍⚕️</span>
+        <span>Patient Requests</span>
+
+    </button>
+
+
+    <div class="menu-title">
+        ANALYTICS
+    </div>
+
+
+    <button class="menu-btn"
+            onclick="bloodStatistics()">
+
+        <span class="menu-icon">📊</span>
+        <span>Blood Statistics</span>
+
+    </button>
+
+
+    <button class="menu-btn"
+            onclick="reports()">
+
+        <span class="menu-icon">📄</span>
+        <span>Reports</span>
+
+    </button>
+
+
+    <div class="menu-title">
+        TOOLS
+    </div>
+
+
+    <button class="menu-btn"
+            onclick="matchingRequests()">
+
+        <span class="menu-icon">🔎</span>
+        <span>Find Matches</span>
+
+    </button>
+
+
+    <button class="menu-btn"
+            onclick="compatibility()">
+
+        <span class="menu-icon">🧬</span>
+        <span>Compatibility</span>
+
+    </button>
+
+
+    <button class="menu-btn notification-row"
+            onclick="notifications()">
+
+        <span class="notification-left">
+
+            <span class="menu-icon">🔔</span>
+            <span>Notifications</span>
+
+        </span>
+
+        <span class="badge"
+              id="notificationBadge">
+            0
+        </span>
+
+    </button>
+
+
+    <button class="menu-btn logout"
+            onclick="logout()">
+
+        <span class="menu-icon">🚪</span>
+        <span>Logout</span>
+
+    </button>
+
+</aside>
+
+
+<!-- ======================================
+     MAIN
+====================================== -->
+
+<main class="main">
+
+
+<header class="topbar">
+
+    <div class="welcome">
+
+        <h1>
+            Admin Dashboard
+        </h1>
+
+        <p>
+            Welcome back! Here's your BloodCare overview.
+        </p>
+
+    </div>
+
+
+    <div class="admin">
+
+        <div class="avatar">
+            👤
+        </div>
+
+        <div>
+
+            <strong>
+                Administrator
+            </strong>
+
+            <span>
+                System Control Panel
+            </span>
+
+        </div>
+
+    </div>
 
 </header>
 
 
-
-<!-- ============================= -->
-<!-- ADMIN MENU -->
-<!-- ============================= -->
-
-<h2 class="section-title">
-    ⚙️ Admin Menu
-</h2>
+<section class="content">
 
 
-<div class="buttons">
-
-
-    <button
-        onclick="registrationRequests()">
-
-        📋
-        <br>
-
-        Donor Requests
-
-    </button>
-
-
-    <button
-        onclick="donors()">
-
-        🩸
-        <br>
-
-        Approved Donors
-
-    </button>
-
-
-    <button
-        onclick="approvedBloodRequests()">
-
-        🏥
-        <br>
-
-        Approved Hospitals
-
-    </button>
-
-
-    <button
-        onclick="bloodStatistics()">
-
-        📊
-        <br>
-
-        Blood Group Statistics
-
-    </button>
-
-
-    <button
-        onclick="reports()">
-
-        📄
-        <br>
-
-        Reports
-
-    </button>
-
-
-    <button
-        onclick="window.location.href='reportpd.html'">
-
-        📄
-        <br>
-
-        Download Reports as PDF
-
-    </button>
-
-
-    <button
-        onclick="notifications()">
-
-        🔔
-        <br>
-
-        Notifications
-
-    </button>
-
-
-    <button
-        onclick="patientRequests()">
-
-        🏥
-        <br>
-
-        Patient Blood Requests
-
-    </button>
-
-
-    <button
-        class="logout"
-        onclick="logout()">
-
-        🚪
-        <br>
-
-        Logout
-
-    </button>
-
-
-</div>
-
-
-<button
-    class="compatibility-btn"
-    onclick="window.location.href='matching-requests.html'">
-
-    🔎 Find Matching Requests
-
-</button>
-
-
-<!-- ============================= -->
-<!-- QUICK ACTIONS -->
-<!-- ============================= -->
-
-<div class="quick">
+<div class="heading">
 
     <h2>
-        ⚡ Quick Actions
+        System Overview
     </h2>
 
-
-    <button
-        onclick="registrationRequests()">
-
-        Review Registrations
-
-    </button>
-
-
-    <button
-        onclick="donors()">
-
-        View Donors
-
-    </button>
-
-
-    <button
-        onclick="approvedBloodRequests()">
-
-        View Approved Hospitals
-
-    </button>
-
-
-    <button
-        onclick="patientRequests()">
-
-        View Patient Requests
-
-    </button>
-
-</div><button
-    class="compatibility-btn"
-    onclick="window.location.href='compatibility.html'">
-
-    🩸 Compatibility Checking
-
-</button>
+    <p>
+        Monitor your blood donation network in real time.
+    </p>
 
 </div>
+
+
+<!-- ======================================
+     STATISTICS
+====================================== -->
+
+<div class="stats">
+
+
+    <div class="stat">
+
+        <div class="stat-icon red">
+            📋
+        </div>
+
+        <div class="stat-info">
+
+            <p>
+                Pending Donor Requests
+            </p>
+
+            <h3 id="pendingCount">
+                0
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon green">
+            🩸
+        </div>
+
+        <div class="stat-info">
+
+            <p>
+                Approved Donors
+            </p>
+
+            <h3 id="donorCount">
+                0
+            </h3>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="stat">
+
+        <div class="stat-icon orange">
+            🩸
+        </div>
+
+        <div class="stat-info">
+
+            <p>
+                Pending Blood Requests
+            </p>
+
+            <h3 id="pendingRequestCount">
+                0
+            </h3>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     MANAGEMENT
+====================================== -->
+
+<div class="section-title">
+
+    <h2>
+        Management Center
+    </h2>
+
+    <span>
+        Manage system modules
+    </span>
+
+</div>
+
+
+<div class="management">
+
+
+    <div class="manage-card"
+         onclick="registrationRequests()">
+
+        <div class="manage-icon">
+            📋
+        </div>
+
+        <h3>
+            Donor Requests
+        </h3>
+
+        <p>
+            Review, approve or reject new donor registrations.
+        </p>
+
+        <div class="open">
+            Manage Requests →
+        </div>
+
+    </div>
+
+
+    <div class="manage-card"
+         onclick="donors()">
+
+        <div class="manage-icon">
+            🩸
+        </div>
+
+        <h3>
+            Approved Donors
+        </h3>
+
+        <p>
+            View and manage your approved donor database.
+        </p>
+
+        <div class="open">
+            View Donors →
+        </div>
+
+    </div>
+
+
+    <div class="manage-card"
+         onclick="approvedHospitals()">
+
+        <div class="manage-icon">
+            🏥
+        </div>
+
+        <h3>
+            Hospitals
+        </h3>
+
+        <p>
+            Manage registered hospitals and blood requirements.
+        </p>
+
+        <div class="open">
+            View Hospitals →
+        </div>
+
+    </div>
+
+
+    <div class="manage-card"
+         onclick="patientRequests()">
+
+        <div class="manage-icon">
+            👨‍⚕️
+        </div>
+
+        <h3>
+            Patient Requests
+        </h3>
+
+        <p>
+            Monitor and manage patient blood requests.
+        </p>
+
+        <div class="open">
+            View Patients →
+        </div>
+
+    </div>
+
+
+    <div class="manage-card"
+         onclick="notifications()">
+
+        <div class="manage-icon">
+            🔔
+        </div>
+
+        <h3>
+            Notifications
+        </h3>
+
+        <p>
+            Stay updated with pending system activities.
+        </p>
+
+        <div class="open">
+            Check Updates →
+        </div>
+
+    </div>
+
+
+    <div class="manage-card"
+         onclick="reports()">
+
+        <div class="manage-icon">
+            📄
+        </div>
+
+        <h3>
+            Reports & Analytics
+        </h3>
+
+        <p>
+            View statistics and generate system reports.
+        </p>
+
+        <div class="open">
+            Open Reports →
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     BOTTOM
+====================================== -->
+
+<div class="bottom">
+
+
+<div class="panel">
+
+    <div class="section-title">
+
+        <h2>
+            Quick Actions
+        </h2>
+
+        <span>
+            Shortcuts
+        </span>
+
+    </div>
+
+
+    <div class="quick">
+
+        <button onclick="matchingRequests()">
+
+            <strong>
+                🔎 Find Blood Match
+            </strong>
+
+            <span>
+                Find compatible donors
+            </span>
+
+        </button>
+
+
+        <button onclick="compatibility()">
+
+            <strong>
+                🧬 Blood Compatibility
+            </strong>
+
+            <span>
+                Check donor compatibility
+            </span>
+
+        </button>
+
+
+        <button onclick="bloodStatistics()">
+
+            <strong>
+                📊 Blood Statistics
+            </strong>
+
+            <span>
+                View blood group statistics
+            </span>
+
+        </button>
+
+
+        <button onclick="reportPDF()">
+
+            <strong>
+                📑 Generate Report
+            </strong>
+
+            <span>
+                Create system PDF report
+            </span>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="panel">
+
+    <div class="section-title">
+
+        <h2>
+            System Status
+        </h2>
+
+        <span>
+            Live
+        </span>
+
+    </div>
+
+
+    <div class="status">
+
+
+        <div class="status-row">
+
+            <div class="status-left">
+
+                <span class="dot"></span>
+
+                Backend API
+
+            </div>
+
+            <span class="online">
+                ONLINE
+            </span>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <div class="status-left">
+
+                <span class="dot"></span>
+
+                Database
+
+            </div>
+
+            <span class="online">
+                CONNECTED
+            </span>
+
+        </div>
+
+
+        <div class="status-row">
+
+            <div class="status-left">
+
+                <span class="dot"></span>
+
+                BloodCare System
+
+            </div>
+
+            <span class="online">
+                ACTIVE
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</div>
+
+
+</section>
+
+</main>
+
+</div>
+
 
 <script>
 
-function goBack() {
-    window.location.href = "index.html";
-}
-// =====================================================
-// REGISTRATION REQUESTS
-// =====================================================
+/* =========================================
+   NAVIGATION
+========================================= */
 
-function registrationRequests() {
-
-    window.location.href =
-        "admin-registrations.html";
-
+function goDashboard(){
+    window.location.href = "admin.html";
 }
 
 
-// =====================================================
-// APPROVED DONORS
-// =====================================================
-
-function donors() {
-
-    window.location.href =
-        "donors.html";
-
+function registrationRequests(){
+    window.location.href = "admin-registrations.html";
 }
 
 
-// =====================================================
-// APPROVED BLOOD REQUESTS / HOSPITALS
-// =====================================================
-
-function approvedBloodRequests() {
-
-    window.location.href =
-        "approved-hospitals.html";
-
+function donors(){
+    window.location.href = "donors.html";
 }
 
 
-// =====================================================
-// BLOOD STATISTICS
-// =====================================================
-
-function bloodStatistics() {
-
-    window.location.href =
-        "blood-statistics.html";
-
+function approvedHospitals(){
+    window.location.href = "approved-hospitals.html";
 }
 
 
-// =====================================================
-// REPORTS
-// =====================================================
-
-function reports() {
-
-    window.location.href =
-        "reports.html";
-
+function patientRequests(){
+    window.location.href = "patient-requests.html";
 }
 
 
-// =====================================================
-// NOTIFICATIONS
-// =====================================================
-
-function notifications() {
-
-    window.location.href =
-        "notifications.html";
-
+function bloodStatistics(){
+    window.location.href = "blood-statistics.html";
 }
 
 
-// =====================================================
-// PATIENT REQUESTS
-// =====================================================
-
-function patientRequests() {
-
-    window.location.href =
-        "patient-requests.html";
-
+function reports(){
+    window.location.href = "reports.html";
 }
 
 
-// =====================================================
-// EMERGENCY REQUESTS
-// =====================================================
-
-function emergencyRequests() {
-
-    window.location.href =
-        "emergency-requests.html";
-
+function notifications(){
+    window.location.href = "notifications.html";
 }
 
 
-// =====================================================
-// LOGOUT
-// =====================================================
-
-function logout() {
-
-    localStorage.removeItem(
-        "adminLoggedIn"
-    );
-
-    localStorage.removeItem(
-        "user"
-    );
-
-    window.location.href =
-        "login.html";
-
+function compatibility(){
+    window.location.href = "compatibility.html";
 }
 
 
-// =====================================================
-// LOAD DASHBOARD STATISTICS
-// =====================================================
+function matchingRequests(){
+    window.location.href = "matching-requests.html";
+}
 
-async function loadStatistics() {
 
-    try {
+function reportPDF(){
+    window.location.href = "reportpd.html";
+}
 
-        // ==========================================
-        // PENDING REGISTRATIONS
-        // ==========================================
 
-        const pendingResponse =
+function logout(){
+
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("user");
+
+    window.location.href = "login.html";
+}
+
+
+/* =========================================
+   LOAD STATISTICS
+========================================= */
+
+async function loadStatistics(){
+
+    let pendingDonors = 0;
+    let pendingBloodRequests = 0;
+
+
+    /* -------------------------------------
+       PENDING DONOR REQUESTS
+    ------------------------------------- */
+
+    try{
+
+        const response =
             await fetch(
                 "http://localhost:5000/api/registrations/pending"
             );
 
-        if (pendingResponse.ok) {
+        if(response.ok){
 
-            const pending =
-                await pendingResponse.json();
+            const data =
+                await response.json();
 
-            document.getElementById(
-                "pendingCount"
-            ).innerText =
-                pending.length;
+            pendingDonors = data.length;
+
+            animateNumber(
+                "pendingCount",
+                pendingDonors
+            );
         }
 
+    }
+    catch(error){
 
-        // ==========================================
-        // APPROVED DONORS
-        // ==========================================
+        console.error(
+            "Pending donor error:",
+            error
+        );
 
-        const donorResponse =
+    }
+
+
+    /* -------------------------------------
+       APPROVED DONORS
+    ------------------------------------- */
+
+    try{
+
+        const response =
             await fetch(
                 "http://localhost:5000/api/donors/approved"
             );
 
-        if (donorResponse.ok) {
+        if(response.ok){
 
-            const donorsData =
-                await donorResponse.json();
+            const data =
+                await response.json();
 
-            document.getElementById(
-                "donorCount"
-            ).innerText =
-                donorsData.length;
+            animateNumber(
+                "donorCount",
+                data.length
+            );
         }
 
+    }
+    catch(error){
 
-        // ==========================================
-        // APPROVED HOSPITALS
-        // ==========================================
+        console.error(
+            "Donor error:",
+            error
+        );
 
-        const hospitalResponse =
+    }
+
+
+    /* -------------------------------------
+       APPROVED HOSPITALS
+    ------------------------------------- */
+
+    try{
+
+        const response =
             await fetch(
                 "http://localhost:5000/api/registrations/hospitals/approved"
             );
 
-        if (hospitalResponse.ok) {
+        if(response.ok){
 
-            const hospitalsData =
-                await hospitalResponse.json();
+            const data =
+                await response.json();
 
-            document.getElementById(
-                "hospitalCount"
-            ).innerText =
-                hospitalsData.length;
+            animateNumber(
+                "hospitalCount",
+                data.length
+            );
         }
 
+    }
+    catch(error){
 
-        // ==========================================
-        // PENDING BLOOD REQUESTS
-        // ==========================================
+        console.error(
+            "Hospital error:",
+            error
+        );
 
-        const requestResponse =
-    await fetch(
-        "http://localhost:5000/api/blood-requests/pending"
+    }
+
+
+    /* -------------------------------------
+       PENDING BLOOD REQUESTS
+    ------------------------------------- */
+
+    try{
+
+        const response =
+            await fetch(
+                "http://localhost:5000/api/blood-requests/pending"
+            );
+
+        if(response.ok){
+
+            const data =
+                await response.json();
+
+            pendingBloodRequests = data.length;
+
+            animateNumber(
+                "pendingRequestCount",
+                pendingBloodRequests
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.error(
+            "Blood request error:",
+            error
+        );
+
+    }
+
+
+    /* -------------------------------------
+       NOTIFICATION COUNT
+    ------------------------------------- */
+
+    const totalNotifications =
+        pendingDonors +
+        pendingBloodRequests;
+
+    animateNumber(
+        "notificationBadge",
+        totalNotifications
     );
 
-if (requestResponse.ok) {
-
-    const requests =
-        await requestResponse.json();
-
-    document.getElementById(
-        "pendingRequestCount"
-    ).innerText =
-        requests.length;
 }
 
 
-    } catch (error) {
+/* =========================================
+   ANIMATED NUMBER
+========================================= */
 
-        console.error(
-            "Statistics error:",
-            error
-        );
+function animateNumber(id,target){
 
-    }
+    const element =
+        document.getElementById(id);
 
-}
-async function loadBloodRequests() {
+    if(!element) return;
 
-    try {
+    let current = 0;
 
-        const response = await fetch(
-            "http://localhost:5000/api/blood-requests/pending"
-        );
+    const duration = 700;
 
-        if (!response.ok) {
-            throw new Error("Failed to load blood requests");
-        }
+    const start =
+        performance.now();
 
-        const requests = await response.json();
+    function update(time){
 
-        const container =
-            document.getElementById("bloodRequests");
-
-        if (!container) {
-            console.error("bloodRequests container not found");
-            return;
-        }
-
-        if (requests.length === 0) {
-
-            container.innerHTML =
-                "<p>No pending blood requests.</p>";
-
-            return;
-        }
-
-        container.innerHTML = requests.map(request => `
-
-            <div class="request-card">
-
-                <h3>
-                    🏥 ${escapeHtml(
-                        request.hospitalName || "Hospital"
-                    )}
-                </h3>
-
-                <p>
-                    <strong>Request ID:</strong>
-                    #${request.id}
-                </p>
-
-                <p>
-                    <strong>Patient:</strong>
-                    ${escapeHtml(
-                        request.patientName || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Blood Group:</strong>
-                    🩸 ${escapeHtml(
-                        request.bloodGroup || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Age:</strong>
-                    ${request.age ?? "Not provided"}
-                </p>
-
-                <p>
-                    <strong>Gender:</strong>
-                    ${escapeHtml(
-                        request.gender || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Patient Status:</strong>
-                    ${escapeHtml(
-                        request.patientStatus || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Blood Units:</strong>
-                    ${request.unitsRequired ?? "Not provided"}
-                </p>
-
-                <p>
-                    <strong>City:</strong>
-                    📍 ${escapeHtml(
-                        request.city || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Phone:</strong>
-                    📞 ${escapeHtml(
-                        request.phone || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Reason:</strong>
-                    ${escapeHtml(
-                        request.reason || "Not provided"
-                    )}
-                </p>
-
-                <p>
-                    <strong>Status:</strong>
-
-                    <span class="status pending">
-                        ${escapeHtml(
-                            request.status || "Pending"
-                        )}
-                    </span>
-
-                </p>
-
-                <div class="request-actions">
-
-                    <button
-                        onclick="approveRequest(${request.id})">
-
-                        ✅ Approve
-
-                    </button>
-
-                    <button
-                        onclick="rejectRequest(${request.id})">
-
-                        ❌ Reject
-
-                    </button>
-
-                </div>
-
-            </div>
-
-        `).join("");
-
-    } catch (error) {
-
-        console.error(
-            "Blood request loading error:",
-            error
-        );
-
-        const container =
-            document.getElementById("bloodRequests");
-
-        if (container) {
-
-            container.innerHTML =
-                "<p>❌ Failed to load blood requests.</p>";
-
-        }
-
-    }
-}
-function escapeHtml(value) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        value ?? "";
-
-    return div.innerHTML;
-}
-async function approveRequest(id) {
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:5000/api/blood-requests/approve/${id}`,
-            {
-                method: "PUT"
-            }
-        );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            alert(
-                data.message ||
-                "Failed to approve request."
+        const progress =
+            Math.min(
+                (time - start) / duration,
+                1
             );
 
-            return;
-        }
-
-        alert(
-            "✅ Blood request approved successfully!"
-        );
-
-        loadBloodRequests();
-
-        loadStatistics();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "❌ Failed to approve blood request."
-        );
-    }
-}
-
-
-async function rejectRequest(id) {
-
-    try {
-
-        const response = await fetch(
-            `http://localhost:5000/api/blood-requests/reject/${id}`,
-            {
-                method: "PUT"
-            }
-        );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            alert(
-                data.message ||
-                "Failed to reject request."
+        current =
+            Math.floor(
+                progress * target
             );
 
-            return;
+        element.innerText =
+            current;
+
+        if(progress < 1){
+
+            requestAnimationFrame(update);
+
         }
+        else{
 
-        alert(
-            "❌ Blood request rejected."
-        );
-
-        loadBloodRequests();
-
-        loadStatistics();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "❌ Failed to reject blood request."
-        );
+            element.innerText =
+                target;
+        }
     }
+
+    requestAnimationFrame(update);
 }
+
+
+/* =========================================
+   START
+========================================= */
+
+loadStatistics();
+
+
+/* =========================================
+   AUTO REFRESH
+========================================= */
+
+setInterval(
+    loadStatistics,
+    30000
+);
 
 </script>
-</body>
 
+</body>
 </html>
