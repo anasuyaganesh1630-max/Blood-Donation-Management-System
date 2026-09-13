@@ -5,6 +5,7 @@ import com.blooddonation.backend.model.Donor;
 import com.blooddonation.backend.model.User;
 import com.blooddonation.backend.repository.DonorRepository;
 import com.blooddonation.backend.repository.UserRepository;
+import com.blooddonation.backend.service.EmailService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,16 @@ public class RegistrationController {
 
     private final UserRepository userRepository;
     private final DonorRepository donorRepository;
+    private final EmailService emailService;
 
     public RegistrationController(
             UserRepository userRepository,
-            DonorRepository donorRepository) {
+            DonorRepository donorRepository,
+            EmailService emailService) {
 
         this.userRepository = userRepository;
         this.donorRepository = donorRepository;
+        this.emailService = emailService;
     }
 
 
@@ -184,6 +188,16 @@ public class RegistrationController {
                         }
                     }
 
+                    // -----------------------------------------
+                    // SEND EMAIL NOTIFICATION
+                    // -----------------------------------------
+                    if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                        emailService.sendApprovalEmail(
+                                user.getEmail(),
+                                user.getName(),
+                                "Registration"
+                        );
+                    }
 
                     // -----------------------------------------
                     // RESPONSE
@@ -227,6 +241,17 @@ public class RegistrationController {
                     user.setStatus("Rejected");
 
                     userRepository.save(user);
+
+                    // -----------------------------------------
+                    // SEND EMAIL NOTIFICATION
+                    // -----------------------------------------
+                    if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+                        emailService.sendRejectionEmail(
+                                user.getEmail(),
+                                user.getName(),
+                                "Registration"
+                        );
+                    }
 
                     Map<String, Object> response =
                             new HashMap<>();

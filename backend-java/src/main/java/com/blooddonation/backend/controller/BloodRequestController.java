@@ -2,6 +2,7 @@ package com.blooddonation.backend.controller;
 
 import com.blooddonation.backend.model.BloodRequest;
 import com.blooddonation.backend.repository.BloodRequestRepository;
+import com.blooddonation.backend.service.EmailService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,14 @@ import java.util.Map;
 public class BloodRequestController {
 
     private final BloodRequestRepository bloodRequestRepository;
+    private final EmailService emailService;
 
     public BloodRequestController(
-            BloodRequestRepository bloodRequestRepository) {
+            BloodRequestRepository bloodRequestRepository,
+            EmailService emailService) {
 
         this.bloodRequestRepository = bloodRequestRepository;
+        this.emailService = emailService;
     }
 
 
@@ -30,51 +34,51 @@ public class BloodRequestController {
     // =========================================================
 
     @PostMapping
-public ResponseEntity<?> submitBloodRequest(
-        @RequestBody BloodRequest request) {
+    public ResponseEntity<?> submitBloodRequest(
+            @RequestBody BloodRequest request) {
 
-    try {
+        try {
 
-        request.setStatus("Pending");
+            request.setStatus("Pending");
 
-        if (request.getRequestDate() == null) {
-            request.setRequestDate(LocalDateTime.now());
+            if (request.getRequestDate() == null) {
+                request.setRequestDate(LocalDateTime.now());
+            }
+
+            BloodRequest savedRequest =
+                    bloodRequestRepository.save(request);
+
+            return ResponseEntity
+                    .status(201)
+                    .body(
+                            Map.of(
+                                    "message",
+                                    "Blood request submitted successfully. Waiting for admin approval.",
+
+                                    "id",
+                                    savedRequest.getId(),
+
+                                    "status",
+                                    savedRequest.getStatus()
+                            )
+                    );
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            Map.of(
+                                    "message",
+                                    "Blood request submission failed",
+                                    "error",
+                                    e.getMessage()
+                            )
+                    );
         }
-
-        BloodRequest savedRequest =
-                bloodRequestRepository.save(request);
-
-        return ResponseEntity
-                .status(201)
-                .body(
-                        Map.of(
-                                "message",
-                                "Blood request submitted successfully. Waiting for admin approval.",
-
-                                "id",
-                                savedRequest.getId(),
-
-                                "status",
-                                savedRequest.getStatus()
-                        )
-                );
-
-    } catch (Exception e) {
-
-        e.printStackTrace();
-
-        return ResponseEntity
-                .internalServerError()
-                .body(
-                        Map.of(
-                                "message",
-                                "Blood request submission failed",
-                                "error",
-                                e.getMessage()
-                        )
-                );
     }
-        }
 
 
     // =========================================================
@@ -106,6 +110,17 @@ public ResponseEntity<?> submitBloodRequest(
                     request.setStatus("Approved");
 
                     bloodRequestRepository.save(request);
+
+                    // -----------------------------------------
+                    // SEND EMAIL NOTIFICATION
+                    // -----------------------------------------
+                    if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+                        emailService.sendApprovalEmail(
+                                request.getEmail(),
+                                request.getPatientName() != null ? request.getPatientName() : "Requester",
+                                "Blood Request"
+                        );
+                    }
 
                     Map<String, Object> response =
                             new HashMap<>();
@@ -169,6 +184,17 @@ public ResponseEntity<?> submitBloodRequest(
                     request.setStatus("Rejected");
 
                     bloodRequestRepository.save(request);
+
+                    // -----------------------------------------
+                    // SEND EMAIL NOTIFICATION
+                    // -----------------------------------------
+                    if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+                        emailService.sendRejectionEmail(
+                                request.getEmail(),
+                                request.getPatientName() != null ? request.getPatientName() : "Requester",
+                                "Blood Request"
+                        );
+                    }
 
                     Map<String, Object> response =
                             new HashMap<>();
@@ -253,83 +279,84 @@ public ResponseEntity<?> submitBloodRequest(
                                 .build()
                 );
     }
+
     @PutMapping("/{id}")
-public ResponseEntity<?> updateBloodRequest(
-        @PathVariable Long id,
-        @RequestBody BloodRequest requestDetails) {
+    public ResponseEntity<?> updateBloodRequest(
+            @PathVariable Long id,
+            @RequestBody BloodRequest requestDetails) {
 
-    return bloodRequestRepository.findById(id)
-            .map(request -> {
+        return bloodRequestRepository.findById(id)
+                .map(request -> {
 
-                request.setHospitalName(
-                        requestDetails.getHospitalName()
+                    request.setHospitalName(
+                            requestDetails.getHospitalName()
+                    );
+
+                    request.setPatientName(
+                            requestDetails.getPatientName()
+                    );
+
+                    request.setAge(
+                            requestDetails.getAge()
+                    );
+
+                    request.setGender(
+                            requestDetails.getGender()
+                    );
+
+                    request.setPatientStatus(
+                            requestDetails.getPatientStatus()
+                    );
+
+                    request.setBloodGroup(
+                            requestDetails.getBloodGroup()
+                    );
+
+                    request.setUnitsRequired(
+                            requestDetails.getUnitsRequired()
+                    );
+
+                    request.setCity(
+                            requestDetails.getCity()
+                    );
+
+                    request.setPhone(
+                            requestDetails.getPhone()
+                    );
+
+                    request.setReason(
+                            requestDetails.getReason()
+                    );
+
+                    BloodRequest updated =
+                            bloodRequestRepository.save(request);
+
+                    return ResponseEntity.ok(updated);
+                })
+                .orElse(
+                        ResponseEntity.notFound().build()
                 );
-
-                request.setPatientName(
-                        requestDetails.getPatientName()
-                );
-
-                request.setAge(
-                        requestDetails.getAge()
-                );
-
-                request.setGender(
-                        requestDetails.getGender()
-                );
-
-                request.setPatientStatus(
-                        requestDetails.getPatientStatus()
-                );
-
-                request.setBloodGroup(
-                        requestDetails.getBloodGroup()
-                );
-
-                request.setUnitsRequired(
-                        requestDetails.getUnitsRequired()
-                );
-
-                request.setCity(
-                        requestDetails.getCity()
-                );
-
-                request.setPhone(
-                        requestDetails.getPhone()
-                );
-
-                request.setReason(
-                        requestDetails.getReason()
-                );
-
-                BloodRequest updated =
-                        bloodRequestRepository.save(request);
-
-                return ResponseEntity.ok(updated);
-            })
-            .orElse(
-                    ResponseEntity.notFound().build()
-            );
-}
-
-
-@DeleteMapping("/{id}")
-public ResponseEntity<?> deleteBloodRequest(
-        @PathVariable Long id) {
-
-    if (!bloodRequestRepository.existsById(id)) {
-
-        return ResponseEntity
-                .notFound()
-                .build();
     }
 
-    bloodRequestRepository.deleteById(id);
 
-    return ResponseEntity.ok(
-            Map.of(
-                    "message",
-                    "Blood request deleted successfully"
-            )
-    );
-}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBloodRequest(
+            @PathVariable Long id) {
+
+        if (!bloodRequestRepository.existsById(id)) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+        bloodRequestRepository.deleteById(id);
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "message",
+                        "Blood request deleted successfully"
+                )
+        );
+    }
 }
