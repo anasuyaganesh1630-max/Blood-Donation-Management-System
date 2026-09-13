@@ -13,15 +13,11 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Apply CORS configuration to all API endpoints
-                        .allowedOrigins(
-                            "http://localhost:5173",
-                            "http://localhost:3000",
-                            "https://blood-donation-management-system-ic.vercel.app" // Your live Vercel URL
-                        )
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowCredentials(false);
             }
         };
     }
