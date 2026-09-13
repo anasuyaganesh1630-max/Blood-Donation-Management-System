@@ -357,7 +357,7 @@ async function loadDonors() {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/donors/all"
+            "https://blood-donation-management-system-1-61sk.onrender.com/api/donors/all"
         );
 
         const donors = await response.json();

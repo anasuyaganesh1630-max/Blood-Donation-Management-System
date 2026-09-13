@@ -20,7 +20,7 @@ async function submitRequest(event) {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/api/blood_Requests/add",
+            "https://blood-donation-management-system-1-61sk.onrender.com/api/blood_Requests/add",
             {
                 method: "POST",
                 headers: {
