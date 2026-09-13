@@ -43,6 +43,9 @@ public class BloodRequest {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "reason")
     private String reason;
 
@@ -204,6 +207,19 @@ public class BloodRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+
+    // ==========================================
+    // EMAIL
+    // ==========================================
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
